@@ -2486,20 +2486,30 @@
         let _historyData = [];
         let _historyExpanded = false;
 
+        function _historyThreshold() {
+            return window.innerWidth >= 768 ? 10 : 1;
+        }
+
         function toggleHistory() {
             _historyExpanded = !_historyExpanded;
-            const btn = document.getElementById('historyToggleBtn');
-            if (btn) btn.innerText = _historyExpanded ? '收合' : '展開全部';
             renderHistoryList();
         }
 
         function renderHistoryList() {
-            const data = _historyExpanded ? _historyData : _historyData.slice(0, 1);
+            const threshold = _historyThreshold();
             const btn = document.getElementById('historyToggleBtn');
+            const needBtn = _historyData.length > threshold;
+
             if (btn) {
-                if (_historyData.length <= 1) { btn.classList.add('hidden'); }
-                else { btn.classList.remove('hidden'); }
+                if (needBtn) {
+                    btn.style.display = 'inline-block';
+                    btn.innerText = _historyExpanded ? '收合' : '展開全部';
+                } else {
+                    btn.style.display = 'none';
+                }
             }
+
+            const data = (_historyExpanded || !needBtn) ? _historyData : _historyData.slice(0, threshold);
             document.getElementById('historyList').innerHTML = data.map(x => {
                 let bdColor = 'border-indigo-500';
                 let txColor = 'text-indigo-600';
@@ -2521,8 +2531,6 @@
         function renderHistory(h) {
             _historyData = (h || []).slice().reverse();
             _historyExpanded = false;
-            const btn = document.getElementById('historyToggleBtn');
-            if (btn) btn.innerText = '展開全部';
             renderHistoryList();
         }
 
@@ -4401,5 +4409,8 @@
         });
 
     </script>
+        window.addEventListener('resize', () => {
+            if (_historyData.length > 0) renderHistoryList();
+        });
 </body>
 </html>
