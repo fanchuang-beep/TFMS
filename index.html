@@ -796,7 +796,7 @@
             <!-- 借出/歸還人員欄位 (僅出庫/回庫時顯示) -->
             <div id="authFlowPersonArea" class="hidden mb-4 text-left">
                 <div class="flex items-center justify-between mb-1">
-                    <label id="authFlowPersonLabel" class="field-label text-red-600">借出人員</label>
+                    <label id="authFlowPersonLabel" class="field-label text-red-600">借出人員 <span class="text-[10px] bg-red-100 text-red-500 px-1.5 py-0.5 rounded font-black ml-1">必填</span></label>
                     <button id="authFlowAddBtn" onclick="authFlowAddPerson()" class="text-[10px] font-black text-indigo-500 hover:text-indigo-700 flex items-center gap-1 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
                         加入選單維護
@@ -2825,7 +2825,7 @@
             const flowPersonInput = document.getElementById('authFlowPersonInput');
             const flowPersonList = document.getElementById('authFlowPersonList');
             if (type === '出庫' || type === '在庫') {
-                flowPersonLabel.innerText = type === '出庫' ? '借出人員' : '歸還人員';
+                flowPersonLabel.innerHTML = (type === '出庫' ? '借出人員' : '歸還人員') + ' <span class="text-[10px] bg-red-100 text-red-500 px-1.5 py-0.5 rounded font-black ml-1">必填</span>';
                 flowPersonLabel.className = `field-label mb-1 ${type === '出庫' ? 'text-red-600' : 'text-green-600'}`;
                 flowPersonInput.value = '';
                 flowPersonInput.placeholder = type === '出庫' ? '輸入借出人員名稱' : '輸入歸還人員名稱';
@@ -3056,6 +3056,16 @@
                     if (!i) return;
                     const flowPersonInput = document.getElementById('authFlowPersonInput');
                     const flowPerson = flowPersonInput ? flowPersonInput.value.trim() : '';
+                    // 必填驗證
+                    if (!flowPerson) {
+                        const label = pendingAction.type === '出庫' ? '借出人員' : '歸還人員';
+                        if (flowPersonInput) {
+                            flowPersonInput.focus();
+                            flowPersonInput.classList.add('border-red-400', 'bg-red-50');
+                            setTimeout(() => flowPersonInput.classList.remove('border-red-400', 'bg-red-50'), 2000);
+                        }
+                        return alert(`請填寫「${label}」後再執行。`);
+                    }
                     const updatedData = { ...i };
                     updatedData.status = pendingAction.type; 
                     updatedData.modUser = user; 
