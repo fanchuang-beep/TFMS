@@ -1952,7 +1952,7 @@
                         }
                         const infoBox = document.getElementById('lastChangeInfo');
                         if (i.modUser && infoBox) {
-                            if (window.innerWidth >= 768) infoBox.classList.remove('hidden');
+                            if (window.innerWidth >= 768) { infoBox.classList.remove('hidden'); } else { infoBox.classList.add('hidden'); }
                             document.getElementById('lastChangeUser').innerText = i.modUser;
                             document.getElementById('lastChangeAction').innerText = i.modAction || '系統更新';
                             document.getElementById('lastChangeTime').innerText = i.modTime;
@@ -2444,7 +2444,7 @@
             
             const infoBox = document.getElementById('lastChangeInfo');
             if (i.modUser) {
-                if (window.innerWidth >= 768) infoBox.classList.remove('hidden');
+                if (window.innerWidth >= 768) { infoBox.classList.remove('hidden'); } else { infoBox.classList.add('hidden'); }
                 document.getElementById('lastChangeUser').innerText = i.modUser;
                 document.getElementById('lastChangeAction').innerText = i.modAction || '系統更新';
                 document.getElementById('lastChangeTime').innerText = i.modTime;
