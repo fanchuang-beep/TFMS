@@ -154,37 +154,36 @@
 
     <main class="max-w-[1800px] mx-auto px-6 mt-8">
         <!-- 搜尋與新增 -->
-        <div class="flex flex-col lg:flex-row gap-4 mb-8">
+        <div class="flex flex-row gap-2 mb-4">
             <div class="relative flex-1 group">
-                <input type="text" id="globalSearch" oninput="renderTable()" placeholder="模糊搜尋：編號、名稱、狀態、地點… (輸入部分文字；用空格或 * 同時搜尋多個關鍵字，如：射出 A棟 或 射出*A棟)" class="w-full p-5 pl-14 text-lg rounded-3xl border-2 border-transparent bg-white shadow-sm group-hover:shadow-md focus:bg-white focus:border-indigo-500 outline-none transition-all">
-                <div class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <input type="text" id="globalSearch" oninput="renderTable()" placeholder="搜尋編號、名稱、狀態、地點…" class="w-full py-3 pl-10 pr-3 text-sm rounded-2xl border-2 border-transparent bg-white shadow-sm focus:bg-white focus:border-indigo-500 outline-none transition-all">
+                <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                 </div>
             </div>
-
-            <button onclick="openModal('newModal')" class="bg-indigo-600 text-white px-10 py-5 rounded-3xl font-black flex items-center justify-center gap-3 hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all active:scale-95">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button onclick="openModal('newModal')" class="bg-indigo-600 text-white px-4 py-3 rounded-2xl font-black flex items-center gap-2 hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95 shrink-0 text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                模治具入庫登記
+                入庫登記
             </button>
         </div>
 
         <!-- 編輯與異動面板 -->
         <section id="actionPanel" class="hidden mb-10 animate-in">
             <div class="section-card overflow-hidden border-2 border-indigo-500 shadow-2xl shadow-indigo-100">
-                <div class="bg-slate-900 px-8 py-5 flex justify-between items-center text-white">
-                    <div class="flex items-center gap-5">
-                        <div id="displayBadge" class="whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase">---</div>
+                <div class="bg-slate-900 px-4 py-3 flex justify-between items-center text-white">
+                    <div class="flex items-center gap-3">
+                        <div id="displayBadge" class="whitespace-nowrap px-3 py-1 rounded-full text-xs font-black tracking-widest uppercase">---</div>
                         <div class="flex flex-col">
-                            <span class="text-[10px] text-slate-400 font-black uppercase tracking-tighter">正在管理模治具編號:</span>
-                            <h2 class="font-black italic text-2xl tracking-tight"><span id="displayId" class="text-indigo-400">---</span></h2>
+                            <span class="text-[9px] text-slate-400 font-black uppercase tracking-tighter">正在管理:</span>
+                            <h2 class="font-black italic text-base tracking-tight"><span id="displayId" class="text-indigo-400">---</span></h2>
                         </div>
                     </div>
-                    <div class="flex items-center gap-6">
-                        <div id="lastChangeInfo" class="hidden md:flex items-center gap-3 py-2 px-5 bg-slate-800 rounded-2xl border border-slate-700">
+                    <div class="flex items-center gap-3">
+                        <div id="lastChangeInfo" class="hidden md:flex items-center gap-3 py-2 px-4 bg-slate-800 rounded-xl border border-slate-700">
                             <div class="flex flex-col border-r border-slate-600 pr-3">
                                 <span class="text-[9px] font-black text-slate-500 uppercase">最後執行人</span>
                                 <span id="lastChangeUser" class="text-xs font-bold text-indigo-300">---</span>
@@ -198,10 +197,11 @@
                                 <span id="lastChangeTime" class="text-[11px] font-medium text-slate-400">---</span>
                             </div>
                         </div>
-                        <button onclick="document.getElementById('actionPanel').classList.add('hidden')" class="bg-slate-800 p-3 rounded-xl hover:bg-red-500 transition-colors group">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <button onclick="document.getElementById('actionPanel').classList.add('hidden')" class="bg-red-500 px-3 py-2 rounded-xl hover:bg-red-600 transition-colors flex items-center gap-1.5 text-white font-black text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
                             </svg>
+                            關閉
                         </button>
                     </div>
                 </div>
@@ -283,63 +283,62 @@
         </section>
 
         <!-- 統計儀表板 -->
-        <div id="statsRow" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='all'; renderTable()">
-                <div class="bg-slate-100 p-3 rounded-xl group-hover:bg-slate-200 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+        <div id="statsRow" class="grid grid-cols-4 gap-2 mb-3">
+            <div class="bg-white rounded-xl border border-slate-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='all'; renderTable()">
+                <div class="bg-slate-100 p-1.5 rounded-lg group-hover:bg-slate-200 transition-colors hidden sm:block">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                 </div>
                 <div>
-                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">全部模治具</div>
-                    <div id="statTotal" class="text-3xl font-black text-slate-800">0</div>
+                    <div class="text-[9px] font-black text-slate-400 uppercase leading-tight">全部</div>
+                    <div id="statTotal" class="text-xl font-black text-slate-800 leading-none">0</div>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-emerald-200 p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='在庫'; renderTable()">
-                <div class="bg-emerald-50 p-3 rounded-xl group-hover:bg-emerald-100 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div class="bg-white rounded-xl border border-emerald-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='在庫'; renderTable()">
+                <div class="bg-emerald-50 p-1.5 rounded-lg group-hover:bg-emerald-100 transition-colors hidden sm:block">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
                 <div>
-                    <div class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">在庫中</div>
-                    <div id="statIn" class="text-3xl font-black text-emerald-600">0</div>
+                    <div class="text-[9px] font-black text-emerald-500 uppercase leading-tight">在庫</div>
+                    <div id="statIn" class="text-xl font-black text-emerald-600 leading-none">0</div>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-red-200 p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='出庫'; renderTable()">
-                <div class="bg-red-50 p-3 rounded-xl group-hover:bg-red-100 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+            <div class="bg-white rounded-xl border border-red-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='出庫'; renderTable()">
+                <div class="bg-red-50 p-1.5 rounded-lg group-hover:bg-red-100 transition-colors hidden sm:block">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                 </div>
                 <div>
-                    <div class="text-[10px] font-black text-red-400 uppercase tracking-widest">出庫中</div>
-                    <div id="statOut" class="text-3xl font-black text-red-500">0</div>
+                    <div class="text-[9px] font-black text-red-400 uppercase leading-tight">出庫</div>
+                    <div id="statOut" class="text-xl font-black text-red-500 leading-none">0</div>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='永久出庫'; renderTable()">
-                <div class="bg-slate-100 p-3 rounded-xl group-hover:bg-slate-200 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+            <div class="bg-white rounded-xl border border-slate-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='永久出庫'; renderTable()">
+                <div class="bg-slate-100 p-1.5 rounded-lg group-hover:bg-slate-200 transition-colors hidden sm:block">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                 </div>
                 <div>
-                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">永久出庫</div>
-                    <div id="statPermOut" class="text-3xl font-black text-slate-500">0</div>
+                    <div class="text-[9px] font-black text-slate-400 uppercase leading-tight">永久出庫</div>
+                    <div id="statPermOut" class="text-xl font-black text-slate-500 leading-none">0</div>
                 </div>
             </div>
         </div>
 
-        <!-- 批量操作工具列 (浮動，有選取時顯示在清單右上方) -->
-        <div id="batchActionBar" class="hidden mb-3 items-center gap-2 bg-white border border-indigo-200 rounded-2xl px-5 py-3 shadow-md">
-            <span id="batchSelectedCount" class="text-sm font-black text-indigo-700 mr-2"></span>
+        <!-- 批量操作工具列 -->
+        <div id="batchActionBar" class="hidden mb-2 items-center gap-1.5 flex-wrap bg-white border border-indigo-200 rounded-xl px-3 py-2 shadow-md">
+            <span id="batchSelectedCount" class="text-xs font-black text-indigo-700 mr-1"></span>
             <div class="flex-1"></div>
-            <button onclick="executeBatchFlow('在庫')" class="px-4 py-2.5 bg-emerald-600 text-white rounded-xl font-black text-xs hover:bg-emerald-700 transition-colors shadow-sm flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                批量回庫
+            <button onclick="executeBatchFlow('在庫')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-black text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                回庫
             </button>
-            <button onclick="executeBatchFlow('出庫')" class="px-4 py-2.5 bg-red-600 text-white rounded-xl font-black text-xs hover:bg-red-700 transition-colors shadow-sm flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7"/></svg>
-                批量出庫
+            <button onclick="executeBatchFlow('出庫')" class="px-3 py-1.5 bg-red-600 text-white rounded-lg font-black text-xs hover:bg-red-700 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7"/></svg>
+                出庫
             </button>
-            <button onclick="openBatchEditModal()" class="px-4 py-2.5 bg-violet-600 text-white rounded-xl font-black text-xs hover:bg-violet-700 transition-colors shadow-sm flex items-center gap-1.5">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                批量修改欄位
+            <button onclick="openBatchEditModal()" class="px-3 py-1.5 bg-violet-600 text-white rounded-lg font-black text-xs hover:bg-violet-700 transition-colors flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                修改欄位
             </button>
-            <div class="w-px h-6 bg-slate-200 mx-1"></div>
-            <button onclick="clearBatchSelection()" class="px-4 py-2.5 bg-slate-100 text-slate-500 rounded-xl font-black text-xs hover:bg-slate-200 transition-colors">✕ 取消選取</button>
+            <button onclick="clearBatchSelection()" class="px-3 py-1.5 bg-slate-100 text-slate-500 rounded-lg font-black text-xs hover:bg-slate-200 transition-colors">✕ 取消</button>
         </div>
 
         <!-- 表格清單 -->
@@ -570,18 +569,18 @@
     </div>
 
     <!-- 平面圖彈窗 -->
-    <div id="mapModal" class="fixed inset-0 bg-slate-900/90 hidden flex items-center justify-center z-[80] p-4 backdrop-blur-md">
-        <div class="bg-white rounded-[3rem] w-full max-w-[1400px] p-8 shadow-2xl h-[90vh] flex flex-col animate-in">
+    <div id="mapModal" class="fixed inset-0 bg-slate-900/90 hidden flex items-center justify-center z-[80] p-1 sm:p-4 backdrop-blur-md">
+        <div class="bg-white rounded-2xl w-full max-w-[1400px] p-3 sm:p-8 shadow-2xl h-[95vh] sm:h-[90vh] flex flex-col animate-in">
             <!-- Header -->
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-4">
-                    <div class="bg-amber-100 p-3 rounded-2xl text-amber-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex flex-wrap justify-between items-start gap-2 mb-3 sm:mb-6">
+                <div class="flex items-center gap-2">
+                    <div class="bg-amber-100 p-2 rounded-xl text-amber-600 hidden sm:block">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                         </svg>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-black italic text-slate-800">存放位置平面圖</h2>
+                        <h2 class="text-base font-black italic text-slate-800">存放位置平面圖</h2>
                         <div class="flex items-center gap-2 mt-1 flex-wrap">
                             <span class="text-xs text-slate-400 font-bold">當前地點：</span>
                             <select id="mapSiteSelect" onchange="changeMapSite()" class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg outline-none cursor-pointer border border-slate-200 hover:border-indigo-400 transition-colors"></select>
@@ -594,26 +593,26 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <button id="btnImportJson" onclick="document.getElementById('importMapConfigInput').click()" class="px-4 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl font-black text-xs hover:bg-emerald-500 hover:text-white transition-colors flex items-center gap-1 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                <div class="flex flex-wrap gap-1.5 items-center">
+                    <button id="btnImportJson" onclick="document.getElementById('importMapConfigInput').click()" class="px-2 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-black text-xs hover:bg-emerald-500 hover:text-white transition-colors hidden sm:flex items-center gap-1 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         匯入設定(JSON)
                     </button>
                     <input type="file" id="importMapConfigInput" class="hidden" accept=".json" onchange="importMapConfigJSON(event)">
                     
-                    <button id="btnExportJson" onclick="exportMapConfigJSON()" class="px-4 py-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-black text-xs hover:bg-amber-500 hover:text-white transition-colors flex items-center gap-1 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12" /></svg>
+                    <button id="btnExportJson" onclick="exportMapConfigJSON()" class="px-2 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg font-black text-xs hover:bg-amber-500 hover:text-white transition-colors hidden sm:flex items-center gap-1 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12" /></svg>
                         匯出設定(JSON)
                     </button>
                     
-                    <button id="btnExportMap" onclick="exportMapImage()" class="px-5 py-3 ml-2 bg-sky-50 text-sky-700 border border-sky-200 rounded-2xl font-black text-sm hover:bg-sky-500 hover:text-white transition-colors flex items-center gap-2 shadow-sm">
+                    <button id="btnExportMap" onclick="exportMapImage()" class="px-3 py-1.5 bg-sky-50 text-sky-700 border border-sky-200 rounded-lg font-black text-xs hover:bg-sky-500 hover:text-white transition-colors flex items-center gap-1 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         匯出平面圖
                     </button>
-                    <button id="btnMapSave" onclick="saveMapChanges()" class="hidden px-5 py-3 bg-emerald-500 text-white rounded-2xl font-black text-sm hover:bg-emerald-600 shadow-md shadow-emerald-500/30 transition-colors">儲存變更</button>
-                    <button id="btnMapEditMode" onclick="toggleMapEditMode()" class="px-5 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-md">進入編輯模式</button>
-                    <button onclick="closeModal('mapModal')" class="text-slate-300 hover:text-slate-500 ml-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button id="btnMapSave" onclick="saveMapChanges()" class="hidden px-3 py-1.5 bg-emerald-500 text-white rounded-lg font-black text-xs hover:bg-emerald-600 shadow-md shadow-emerald-500/30 transition-colors">儲存</button>
+                    <button id="btnMapEditMode" onclick="toggleMapEditMode()" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-black text-xs hover:bg-indigo-700 transition-colors shadow-md">編輯</button>
+                    <button onclick="closeModal('mapModal')" class="text-slate-300 hover:text-slate-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
@@ -801,43 +800,43 @@
     </div>
 
     <!-- 設定彈窗 -->
-    <div id="sysConfigModal" class="fixed inset-0 bg-slate-900/90 hidden flex items-center justify-center z-[70] p-4 backdrop-blur-md">
-        <div class="bg-white rounded-[2.5rem] w-full max-w-5xl p-10 shadow-2xl max-h-[90vh] flex flex-col">
+    <div id="sysConfigModal" class="fixed inset-0 bg-slate-900/90 hidden flex items-center justify-center z-[70] p-2 sm:p-4 backdrop-blur-md">
+        <div class="bg-white rounded-2xl w-full max-w-5xl p-4 sm:p-8 shadow-2xl max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-black">選單項目維護</h2>
                 <button onclick="closeModal('sysConfigModal')" class="text-slate-400 hover:text-slate-600 transition-colors">關閉</button>
             </div>
             <!-- 兩欄佈局 -->
-            <div class="flex-1 flex gap-6 overflow-hidden min-h-0">
+            <div class="flex-1 flex gap-4 overflow-hidden min-h-0">
                 <!-- 左欄：選單維護 -->
-                <div class="flex-1 overflow-y-auto custom-scroll space-y-8 pr-2">
+                <div class="flex-1 overflow-y-auto custom-scroll space-y-5 pr-1">
                     <section>
-                        <h3 class="field-label text-indigo-600 mb-3">1. 類別項目</h3>
-                        <div class="flex gap-2 mb-3">
+                        <h3 class="field-label text-indigo-600 mb-2">1. 類別項目</h3>
+                        <div class="flex gap-2 mb-2">
                             <input type="text" id="addCatIn" class="field-input" placeholder="輸入新項目...">
                             <button onclick="addOpt('categories', 'addCatIn')" class="bg-slate-800 text-white px-5 rounded-xl font-black text-sm">新增</button>
                         </div>
                         <div id="optList-categories" class="flex flex-wrap gap-2"></div>
                     </section>
                     <section>
-                        <h3 class="field-label text-blue-600 mb-3">2. 模治具狀態</h3>
-                        <div class="flex gap-2 mb-3">
+                        <h3 class="field-label text-blue-600 mb-2">2. 模治具狀態</h3>
+                        <div class="flex gap-2 mb-2">
                             <input type="text" id="addStatusIn" class="field-input" placeholder="輸入新項目...">
                             <button onclick="addOpt('mouldStatuses', 'addStatusIn')" class="bg-slate-800 text-white px-5 rounded-xl font-black text-sm">新增</button>
                         </div>
                         <div id="optList-mouldStatuses" class="flex flex-wrap gap-2"></div>
                     </section>
                     <section>
-                        <h3 class="field-label text-emerald-600 mb-3">3. 存放地點</h3>
-                        <div class="flex gap-2 mb-3">
+                        <h3 class="field-label text-emerald-600 mb-2">3. 存放地點</h3>
+                        <div class="flex gap-2 mb-2">
                             <input type="text" id="addSiteIn" class="field-input" placeholder="輸入新項目...">
                             <button onclick="addOpt('sites', 'addSiteIn')" class="bg-slate-800 text-white px-5 rounded-xl font-black text-sm">新增</button>
                         </div>
                         <div id="optList-sites" class="flex flex-wrap gap-2"></div>
                     </section>
                     <section>
-                        <h3 class="field-label text-rose-600 mb-3">4. 借出/歸還人員</h3>
-                        <div class="flex gap-2 mb-3">
+                        <h3 class="field-label text-rose-600 mb-2">4. 借出/歸還人員</h3>
+                        <div class="flex gap-2 mb-2">
                             <input type="text" id="addBorrowPersonIn" class="field-input" placeholder="人員姓名...">
                             <button onclick="addOpt('borrowPersons', 'addBorrowPersonIn')" class="bg-slate-800 text-white px-5 rounded-xl font-black text-sm">新增</button>
                         </div>
@@ -845,7 +844,7 @@
                     </section>
                 </div>
                 <!-- 右欄：異動紀錄 -->
-                <div class="w-72 shrink-0 flex flex-col border-l border-slate-100 pl-6">
+                <div class="hidden sm:flex w-64 shrink-0 flex-col border-l border-slate-100 pl-4">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-sm font-black text-slate-700">異動紀錄</h3>
 
@@ -3337,7 +3336,7 @@
             const btnImportJson = document.getElementById('btnImportJson');
             const btnExportJson = document.getElementById('btnExportJson');
             
-            btnEdit.innerText = '進入編輯模式';
+            btnEdit.innerText = '編輯';
             btnEdit.className = 'px-5 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-md';
             btnSave.classList.add('hidden');
             btnExportMap.classList.add('hidden');
@@ -3365,7 +3364,7 @@
             const btnImportJson = document.getElementById('btnImportJson');
             const btnExportJson = document.getElementById('btnExportJson');
             
-            btnEdit.innerText = '進入編輯模式';
+            btnEdit.innerText = '編輯';
             btnEdit.className = 'px-5 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-md';
             btnSave.classList.add('hidden');
             btnExportMap.classList.add('hidden');
