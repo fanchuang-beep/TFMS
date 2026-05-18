@@ -299,15 +299,15 @@
                                 <button onclick="handleFlow('出庫')" id="btnOut" class="flex-1 min-w-[150px] py-4 bg-red-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-red-700 transition-all active:scale-95">執行出庫</button>
                                 <button onclick="handleFlow('在庫')" id="btnIn" class="flex-1 min-w-[150px] py-4 bg-green-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-green-700 transition-all active:scale-95">執行回庫</button>
                                 <button onclick="handlePermOut()" id="btnPermOut" class="hidden flex-1 min-w-[150px] py-4 bg-slate-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-slate-700 transition-all active:scale-95">永久出庫</button>
-                                <button onclick="cancelEdit()" id="btnCancelEdit" class="px-8 py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold shadow hover:bg-slate-200 transition-all active:scale-95 opacity-40 cursor-not-allowed pointer-events-none">取消變更</button>
-                                <button onclick="triggerUpdate()" id="btnSave" class="px-10 py-4 bg-slate-800 text-white rounded-2xl font-bold shadow-lg hover:bg-black transition-all active:scale-95">確認變更</button>
+                                <button onclick="cancelEdit()" id="btnCancelEdit" class="px-8 py-4 bg-slate-200 text-slate-400 rounded-2xl font-bold shadow hover:bg-slate-300 transition-all active:scale-95 opacity-40 cursor-not-allowed pointer-events-none">取消變更</button>
+                                <button onclick="triggerUpdate()" id="btnSave" class="px-10 py-4 bg-slate-300 text-slate-500 rounded-2xl font-bold shadow-lg transition-all active:scale-95 opacity-40 cursor-not-allowed pointer-events-none">確認變更</button>
                             </div>
                         </div>
                     </div>
                     <div class="lg:col-span-3 bg-slate-50/50 p-8 flex flex-col">
                         <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center justify-between">
                             <span>異動歷史</span>
-                            <span class="text-[10px] bg-slate-200 px-2 py-0.5 rounded text-slate-500">最近記錄</span>
+                            <button id="historyToggleBtn" onclick="toggleHistory()" class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded font-black hover:bg-indigo-200 transition-colors">展開全部</button>
                         </h3>
                         <div id="historyList" class="space-y-4 overflow-y-auto flex-1 max-h-[600px] custom-scroll pr-3"></div>
                     </div>
@@ -316,7 +316,7 @@
         </section>
 
         <!-- 統計儀表板 -->
-        <div id="statsRow" class="grid grid-cols-4 gap-2 mb-3">
+        <div id="statsRow" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
             <div class="bg-white rounded-xl border border-slate-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='all'; renderTable()">
                 <div class="bg-slate-100 p-1.5 rounded-lg group-hover:bg-slate-200 transition-colors hidden sm:block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
@@ -1356,8 +1356,30 @@
             // Helper: show/hide element
             const show = (el) => { if (el) { el.classList.remove('hidden'); el.classList.add('flex'); } };
             const hide = (el) => { if (el) { el.classList.add('hidden'); el.classList.remove('flex'); } };
-            const disable = (el) => { if (el) el.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none'); };
-            const enable  = (el) => { if (el) el.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none'); };
+            const disable = (el) => {
+                if (!el) return;
+                el.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+                if (el.id === 'btnSave') {
+                    el.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'text-white', 'shadow-lg');
+                    el.classList.add('bg-slate-300', 'text-slate-500');
+                }
+                if (el.id === 'btnCancelEdit') {
+                    el.classList.remove('bg-amber-100', 'text-amber-700', 'hover:bg-amber-200');
+                    el.classList.add('bg-slate-200', 'text-slate-400');
+                }
+            };
+            const enable = (el) => {
+                if (!el) return;
+                el.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+                if (el.id === 'btnSave') {
+                    el.classList.remove('bg-slate-300', 'text-slate-500');
+                    el.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'text-white', 'shadow-lg');
+                }
+                if (el.id === 'btnCancelEdit') {
+                    el.classList.remove('bg-slate-200', 'text-slate-400');
+                    el.classList.add('bg-amber-100', 'text-amber-700', 'hover:bg-amber-200');
+                }
+            };
 
             // 先全部隱藏 badge
             hide(unsavedBadge); hide(permOutBadge); hide(noChangeBadge);
@@ -2461,15 +2483,30 @@
             setTimeout(refreshFlowBtnState, 0);
         }
 
-        function renderHistory(h) {
-            document.getElementById('historyList').innerHTML = (h || []).slice().reverse().map(x => {
+        let _historyData = [];
+        let _historyExpanded = false;
+
+        function toggleHistory() {
+            _historyExpanded = !_historyExpanded;
+            const btn = document.getElementById('historyToggleBtn');
+            if (btn) btn.innerText = _historyExpanded ? '收合' : '展開全部';
+            renderHistoryList();
+        }
+
+        function renderHistoryList() {
+            const data = _historyExpanded ? _historyData : _historyData.slice(0, 1);
+            const btn = document.getElementById('historyToggleBtn');
+            if (btn) {
+                if (_historyData.length <= 1) { btn.classList.add('hidden'); }
+                else { btn.classList.remove('hidden'); }
+            }
+            document.getElementById('historyList').innerHTML = data.map(x => {
                 let bdColor = 'border-indigo-500';
                 let txColor = 'text-indigo-600';
                 if (x.type === '出庫') { bdColor = 'border-red-500'; txColor = 'text-red-500'; }
                 else if (x.type === '永久出庫') { bdColor = 'border-slate-500'; txColor = 'text-slate-600'; }
                 else if (x.type === '在庫' || x.type === '登記入庫' || x.type === 'Excel 匯入') { bdColor = 'border-green-500'; txColor = 'text-green-600'; }
                 else if (x.type.includes('變更編號')) { bdColor = 'border-amber-500'; txColor = 'text-amber-600'; }
-                
                 return `
                 <div class="bg-white p-4 rounded-2xl border-l-4 ${bdColor}">
                     <div class="flex items-center gap-2 mb-1">
@@ -2478,7 +2515,15 @@
                     </div>
                     <div class="text-sm font-black">${x.user}</div>
                 </div>
-            `}).join('');
+            `;}).join('');
+        }
+
+        function renderHistory(h) {
+            _historyData = (h || []).slice().reverse();
+            _historyExpanded = false;
+            const btn = document.getElementById('historyToggleBtn');
+            if (btn) btn.innerText = '展開全部';
+            renderHistoryList();
         }
 
         function initDragAndDrop() {
