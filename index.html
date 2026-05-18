@@ -114,10 +114,13 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <!-- 已登入使用者資訊（完全隱藏，登出整合至縮疊選單） -->
-                <div id="headerUserBar" class="hidden items-center gap-2">
-                    <div id="headerUserName" class="hidden"></div>
-                    <div id="headerUserRole" class="hidden"></div>
+                <!-- 已登入使用者資訊（桌機顯示，手機隱藏） -->
+                <div id="headerUserBar" class="hidden md:flex items-center gap-2">
+                    <div class="text-right">
+                        <div id="headerUserName" class="text-xs font-black text-white leading-tight"></div>
+                        <div id="headerUserRole" class="text-[9px] text-indigo-300 font-bold"></div>
+                    </div>
+                    <button onclick="doLogout()" class="bg-red-600 hover:bg-red-500 px-3 py-2 rounded-xl text-[11px] font-black text-white transition-all">登出</button>
                 </div>
                 <!-- 漢堡按鈕（手機顯示） -->
                 <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden bg-slate-700 p-2 rounded-xl hover:bg-slate-600 transition-all">
@@ -1949,7 +1952,7 @@
                         }
                         const infoBox = document.getElementById('lastChangeInfo');
                         if (i.modUser && infoBox) {
-                            infoBox.classList.remove('hidden');
+                            if (window.innerWidth >= 768) infoBox.classList.remove('hidden');
                             document.getElementById('lastChangeUser').innerText = i.modUser;
                             document.getElementById('lastChangeAction').innerText = i.modAction || '系統更新';
                             document.getElementById('lastChangeTime').innerText = i.modTime;
@@ -2441,7 +2444,7 @@
             
             const infoBox = document.getElementById('lastChangeInfo');
             if (i.modUser) {
-                infoBox.classList.remove('hidden');
+                if (window.innerWidth >= 768) infoBox.classList.remove('hidden');
                 document.getElementById('lastChangeUser').innerText = i.modUser;
                 document.getElementById('lastChangeAction').innerText = i.modAction || '系統更新';
                 document.getElementById('lastChangeTime').innerText = i.modTime;
