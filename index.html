@@ -139,7 +139,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4 4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         Excel 匯出
                     </button>
-                    <button id="sysConfigBtn" onclick="openModal('sysConfigModal'); loadOptHistory();" class="bg-indigo-600 px-4 py-2.5 rounded-xl hover:bg-indigo-500 text-[11px] font-black flex items-center gap-2 transition-all">
+                    <button id="sysConfigBtn" onclick="openSysConfigModal()" class="bg-indigo-600 px-4 py-2.5 rounded-xl hover:bg-indigo-500 text-[11px] font-black flex items-center gap-2 transition-all">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
                         選單設定
                     </button>
@@ -161,7 +161,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4 4l-4 4m0 0l-4-4m4 4V4" /></svg>
                 Excel 匯出
             </button>
-            <button id="mobileConfigBtn" onclick="openModal('sysConfigModal'); loadOptHistory(); closeMobileMenu()" class="bg-indigo-600 px-4 py-3 rounded-xl hover:bg-indigo-500 text-sm font-black flex items-center gap-3 transition-all" style="display:none">
+            <button id="mobileConfigBtn" onclick="openSysConfigModal(); closeMobileMenu()" class="bg-indigo-600 px-4 py-3 rounded-xl hover:bg-indigo-500 text-sm font-black flex items-center gap-3 transition-all" style="display:none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
                 選單設定
             </button>
@@ -744,8 +744,24 @@
                 </button>
             </div>
             <div class="flex-1 overflow-y-auto custom-scroll space-y-8 pr-2">
-                <!-- 新增帳號 -->
-                <section>
+                <!-- 我的帳號資訊（所有登入者可見）-->
+                <section id="accSectionMyInfo">
+                    <h3 class="field-label text-indigo-600 mb-3">我的帳號資訊</h3>
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 space-y-2">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-indigo-100 p-2 rounded-xl">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            </div>
+                            <div>
+                                <div id="myAccName" class="font-black text-slate-800 text-base">—</div>
+                                <div id="myAccEmail" class="text-xs text-slate-400 font-bold">—</div>
+                            </div>
+                            <span id="myAccRole" class="ml-auto text-xs px-2 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-600"></span>
+                        </div>
+                    </div>
+                </section>
+                <!-- 新增帳號（admin only）-->
+                <section id="accSectionCreate">
                     <h3 class="field-label text-indigo-600 mb-3">新增帳號</h3>
                     <div class="space-y-3">
                         <div class="grid grid-cols-2 gap-3">
@@ -763,8 +779,8 @@
                         <button onclick="createAccount()" class="w-full py-3 bg-indigo-600 text-white rounded-2xl font-black hover:bg-indigo-700 transition-all">建立帳號</button>
                     </div>
                 </section>
-                <!-- 現有帳號列表 -->
-                <section>
+                <!-- 現有帳號列表（admin only）-->
+                <section id="accSectionList">
                     <h3 class="field-label text-indigo-600 mb-3">現有帳號</h3>
                     <div id="accountListContainer" class="space-y-2"></div>
                 </section>
@@ -842,7 +858,7 @@
             <div class="flex-1 flex gap-4 overflow-hidden min-h-0">
                 <!-- 左欄：選單維護 -->
                 <div class="flex-1 overflow-y-auto custom-scroll space-y-5 pr-1">
-                    <section>
+                    <section id="optSection-categories">
                         <h3 class="field-label text-indigo-600 mb-2">1. 類別項目</h3>
                         <div class="flex gap-2 mb-2">
                             <input type="text" id="addCatIn" class="field-input" placeholder="輸入新項目...">
@@ -850,7 +866,7 @@
                         </div>
                         <div id="optList-categories" class="flex flex-wrap gap-2"></div>
                     </section>
-                    <section>
+                    <section id="optSection-mouldStatuses">
                         <h3 class="field-label text-blue-600 mb-2">2. 模治具狀態</h3>
                         <div class="flex gap-2 mb-2">
                             <input type="text" id="addStatusIn" class="field-input" placeholder="輸入新項目...">
@@ -858,7 +874,7 @@
                         </div>
                         <div id="optList-mouldStatuses" class="flex flex-wrap gap-2"></div>
                     </section>
-                    <section>
+                    <section id="optSection-sites">
                         <h3 class="field-label text-emerald-600 mb-2">3. 存放地點</h3>
                         <div class="flex gap-2 mb-2">
                             <input type="text" id="addSiteIn" class="field-input" placeholder="輸入新項目...">
@@ -993,11 +1009,40 @@
             </div>
             <div id="createConfirmPermOutWarn" class="hidden mb-4 flex items-center gap-2 bg-amber-50 border border-amber-300 rounded-2xl px-4 py-3 text-left">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-                <span class="text-sm font-black text-amber-700">注意：選擇的狀態將使此模治具<strong>修改為永久出庫</strong>，入庫後將直接記錄為永久出庫。</span>
+                <span id="createConfirmPermOutWarnText" class="text-sm font-black text-amber-700">注意：選擇的狀態將使此模治具<strong>修改為永久出庫</strong>，入庫後將直接記錄為永久出庫。</span>
             </div>
             <div class="flex gap-3">
                 <button onclick="closeModal('createConfirmModal')" class="flex-1 py-3.5 bg-slate-100 rounded-xl font-black text-slate-500 hover:bg-slate-200 transition-colors">取消</button>
                 <button onclick="closeModal('createConfirmModal'); doConfirmCreate();" class="flex-1 py-3.5 bg-indigo-600 text-white rounded-xl font-black hover:bg-indigo-700 shadow-lg shadow-indigo-500/30 transition-all">確認入庫</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登入成功提示 (2秒自動關閉) -->
+    <div id="loginSuccessToast" class="fixed inset-0 hidden flex items-center justify-center z-[500] p-4 pointer-events-none">
+        <div class="bg-slate-900/90 backdrop-blur-md rounded-[2rem] px-10 py-8 shadow-2xl text-center animate-in pointer-events-auto max-w-xs w-full">
+            <div class="bg-green-500 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 shadow-lg shadow-green-500/40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div id="loginSuccessName" class="text-xl font-black text-white mb-1">Fan.Chuang</div>
+            <div class="text-sm font-bold text-slate-300 mb-4">登入成功</div>
+            <div class="w-full bg-slate-700 rounded-full h-1 overflow-hidden">
+                <div id="loginSuccessBar" class="h-1 bg-green-400 rounded-full transition-all" style="width:100%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登出前匯出提醒 -->
+    <div id="logoutExportModal" class="fixed inset-0 bg-slate-900/90 hidden flex items-center justify-center z-[450] p-4 backdrop-blur-md">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-sm p-10 shadow-2xl text-center animate-in">
+            <div class="bg-amber-100 w-16 h-16 mx-auto rounded-full flex items-center justify-center text-amber-500 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            </div>
+            <h3 class="text-xl font-black mb-2 text-slate-800">登出前建議匯出</h3>
+            <p id="logoutExportMsg" class="text-sm text-slate-500 font-bold mb-8 leading-relaxed">本月尚未匯出資料，建議先匯出 Excel 備份後再登出。</p>
+            <div class="flex gap-3">
+                <button onclick="doLogoutDirect()" class="flex-1 py-3.5 bg-slate-100 rounded-xl font-black text-slate-500 hover:bg-slate-200 transition-colors">直接登出</button>
+                <button onclick="exportThenLogout()" class="flex-1 py-3.5 bg-amber-500 text-white rounded-xl font-black hover:bg-amber-600 shadow-lg shadow-amber-500/30 transition-all">匯出後登出</button>
             </div>
         </div>
     </div>
@@ -1079,7 +1124,7 @@
 
         const defaultOptions = {
             categories: ['射出模具', '沖壓模具', '超音波模具', '熱壓模具', '治具', '卡式模座', '設備', '移印鋼板', '刀模', '包裝TRAY', '其他'],
-            mouldStatuses: ['列帳納管', '除帳保留', '除帳報廢', '運回給客人', '除帳報廢，已清運'],
+            mouldStatuses: ['列帳納管', '除帳保留', '除帳報廢', '運回給客人', '除帳報廢，已清運', '移轉量產'],
             sites: ['DP 9F RD模治具庫房', 'CY 生產棟2F 生產備品室', 'DP 10F 備品室', 'DP 11F 產線', 'DP 10F 產線', 'DP 10F QC', 'DP 9F 試作室', 'CY生產棟1F 純水機房(南側)'],
             borrowPersons: []
         };
@@ -1251,6 +1296,7 @@
             const btnIn = document.getElementById('btnIn');
             if (!btnPermOut) return;
             const isPermOutStatus = (val === '運回給客人' || val === '除帳報廢，已清運');
+            const isAutoOutStatus = (val === '移轉量產');
             // 永久出庫按鈕已不再使用（改為存檔時自動處理），始終隱藏
             btnPermOut.classList.add('hidden');
             if (btnOut) btnOut.classList.remove('hidden');
@@ -1341,6 +1387,7 @@
             const currentMouldStatus = document.getElementById('editMouldStatus')?.value || '';
             // 當前UI選的是永久出庫觸發狀態（但資料庫還未是永久出庫）
             const uiWillPermOut = !isPermOut && (currentMouldStatus === '運回給客人' || currentMouldStatus === '除帳報廢，已清運');
+            const uiWillAutoOut = !isPermOut && currentMouldStatus === '移轉量產';
 
             const unsavedBadge    = document.getElementById('unsavedWarningBadge');
             const permOutBadge    = document.getElementById('permOutStatusBadge');
@@ -1508,6 +1555,7 @@
             const alert = document.getElementById('batchPermOutAlert');
             if (!alert) return;
             const isPermStatus = chk && chk.checked && sel && (sel.value === '運回給客人' || sel.value === '除帳報廢，已清運');
+            const isAutoOutSt = chk && chk.checked && sel && sel.value === '移轉量產';
             if (isPermStatus) {
                 alert.classList.remove('hidden');
                 alert.classList.add('flex');
@@ -1538,6 +1586,7 @@
 
             // 檢查是否觸發永久出庫
             const willPermOut = fields.mouldStatus && (fields.mouldStatus === '運回給客人' || fields.mouldStatus === '除帳報廢，已清運');
+            const willAutoOut = fields.mouldStatus && fields.mouldStatus === '移轉量產';
             closeModal('batchEditModal');
             
             if (willPermOut) {
@@ -1545,6 +1594,10 @@
                 pendingAction = { action: 'batchEdit', fields, ids: [...batchSelected], permOut: true };
                 document.getElementById('authModalTitle').innerText = `批量修改 + 永久出庫 (${batchSelected.size} 筆)`;
                 document.getElementById('authSubmitBtn').innerText = '確認修改並永久出庫';
+            } else if (willAutoOut) {
+                pendingAction = { action: 'batchEdit', fields, ids: [...batchSelected], permOut: false, autoOut: true };
+                document.getElementById('authModalTitle').innerText = `批量修改 + 出庫 (${batchSelected.size} 筆)`;
+                document.getElementById('authSubmitBtn').innerText = '確認修改並出庫';
             } else {
                 pendingAction = { action: 'batchEdit', fields, ids: [...batchSelected], permOut: false };
                 document.getElementById('authModalTitle').innerText = `批量修改欄位 (${batchSelected.size} 筆)`;
@@ -1564,7 +1617,10 @@
             
             // 顯示永久出庫提示
             let hint = document.getElementById('newPermOutHint');
-            if (val === '運回給客人' || val === '除帳報廢，已清運') {
+            if (val === '移轉量產') {
+                permOutHint?.classList.remove('hidden');
+                if (permOutHintText) permOutHintText.innerHTML = '選擇「移轉量產」後確認變更，將自動將此模治具設為<strong>出庫</strong>狀態。';
+            } else if (val === '運回給客人' || val === '除帳報廢，已清運') {
                 if (!hint) {
                     hint = document.createElement('div');
                     hint.id = 'newPermOutHint';
@@ -1778,8 +1834,73 @@
             }
         }
 
+        // ── 匯出記錄 localStorage key ──
+        const EXPORT_LOG_KEY = 'tfms_last_export_ts';
+
+        function getLastExportTs() {
+            try { return parseInt(localStorage.getItem(EXPORT_LOG_KEY) || '0'); } catch(e) { return 0; }
+        }
+        function setLastExportTs() {
+            try { localStorage.setItem(EXPORT_LOG_KEY, Date.now().toString()); } catch(e) {}
+        }
+
+        // ── 登入成功提示 (2秒自動關閉) ──
+        function showLoginSuccessToast(name) {
+            const toast = document.getElementById('loginSuccessToast');
+            const nameEl = document.getElementById('loginSuccessName');
+            const bar = document.getElementById('loginSuccessBar');
+            if (!toast) return;
+            if (nameEl) nameEl.innerText = name;
+            toast.classList.remove('hidden');
+            // 進度條動畫
+            if (bar) {
+                bar.style.transition = 'none';
+                bar.style.width = '100%';
+                setTimeout(() => {
+                    bar.style.transition = 'width 1s linear';
+                    bar.style.width = '0%';
+                }, 50);
+            }
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                // 登入後檢查是否超過30天未匯出
+                checkMonthlyExport();
+            }, 1000);
+        }
+
+        // ── 每月登入提醒 ──
+        function checkMonthlyExport() {
+            const last = getLastExportTs();
+            const now = Date.now();
+            const days = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+            if (last === 0 || days >= 30) {
+                const msg = last === 0
+                    ? '尚無匯出記錄，建議定期匯出 Excel 備份資料。'
+                    : `距上次匯出已 ${days} 天，建議匯出最新資料備份。`;
+                showSysMsg(`📋 每月備份提醒\n\n${msg}\n\n可按右上角【Excel 匯出】進行備份。`, 'warn');
+            }
+        }
+
+        // ── 登出前匯出提醒 ──
         async function doLogout() {
-            if (!confirm('確定要登出嗎？')) return;
+            const last = getLastExportTs();
+            const now = Date.now();
+            const days = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+            const needRemind = last === 0 || days >= 30;
+            if (needRemind) {
+                const msg = last === 0
+                    ? '尚無匯出記錄，建議先匯出 Excel 備份後再登出。'
+                    : `距上次匯出已 ${days} 天，建議先匯出最新資料後再登出。`;
+                document.getElementById('logoutExportMsg').innerText = msg;
+                openModal('logoutExportModal');
+            } else {
+                if (!confirm('確定要登出嗎？')) return;
+                await doLogoutDirect();
+            }
+        }
+
+        async function doLogoutDirect() {
+            closeModal('logoutExportModal');
             await signOut(auth);
             loggedInProfile = null;
             currentUser = null;
@@ -1790,6 +1911,37 @@
             const mur2 = document.getElementById('mobileUserRole'); if(mur2) mur2.innerText = '';
             document.getElementById('mainApp').classList.add('hidden');
             showLoginModal();
+        }
+
+        async function exportThenLogout() {
+            closeModal('logoutExportModal');
+            // 執行匯出
+            if (currentFilteredData && currentFilteredData.length > 0) {
+                doExportExcel();
+            } else {
+                // 若目前篩選後無資料，清除篩選後匯出全部
+                const allData = [...inventory];
+                const XLSX = window.XLSX;
+                if (XLSX && allData.length > 0) {
+                    const exportData = allData.map(i => ({
+                        '狀態': i.status, '類別': i.category, '模治具編號': i.id,
+                        '模治具名稱': i.name, '資產編號': i.assetId || '',
+                        '所屬配件': i.parts || '', '保管人': i.keeper || '依資產系統為準',
+                        '模治具狀態': i.mouldStatus || '', '存放地點': i.locationSite || '',
+                        '存放位置': i.locationPos || '', '備註': i.note || '',
+                        '最後異動人員': i.modUser || '', '最後異動時間': i.modTime || ''
+                    }));
+                    const ws = XLSX.utils.json_to_sheet(exportData);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, '模治具清單');
+                    const now = new Date();
+                    const d = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+                    XLSX.writeFile(wb, `模治具清單_匯出_${d}.xlsx`);
+                    setLastExportTs();
+                }
+            }
+            // 短暫等待下載觸發後再登出
+            setTimeout(async () => { await doLogoutDirect(); }, 800);
         }
 
         onAuthStateChanged(auth, async (user) => {
@@ -1817,16 +1969,19 @@
                 hideLoginModal();
                 document.getElementById('cloudStatus').innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>已連線`;
                 document.getElementById('cloudStatus').className = "ml-3 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1 align-middle transition-all";
+                // 顯示登入成功提示
+                showLoginSuccessToast(loggedInProfile.name || user.email);
                 // 系統設定按鈕只有 admin 可見
+                // 選單設定：admin only
                 const cfgBtn = document.getElementById('sysConfigBtn');
                 if (cfgBtn) cfgBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
-                    const mobileCfgBtn = document.getElementById('mobileConfigBtn');
-                    if (mobileCfgBtn) mobileCfgBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
-                // 帳號管理按鈕只有 admin 可見
+                const mobileCfgBtn = document.getElementById('mobileConfigBtn');
+                if (mobileCfgBtn) mobileCfgBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
+                // 帳號管理：所有登入者皆可見
                 const accBtn = document.getElementById('accountMgmtBtn');
-                if (accBtn) accBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
-                    const mobileAccBtn = document.getElementById('mobileAccountMgmtBtn');
-                    if (mobileAccBtn) mobileAccBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
+                if (accBtn) accBtn.style.display = '';
+                const mobileAccBtn = document.getElementById('mobileAccountMgmtBtn');
+                if (mobileAccBtn) mobileAccBtn.style.display = '';
                 setupListeners();
             } else {
                 currentUser = null;
@@ -1842,7 +1997,25 @@
         // ── 帳號管理功能 ──
         async function openAccountModal() {
             if (!loggedInProfile) return;
-            await loadAccountList();
+            const isAdmin = loggedInProfile.role === 'admin';
+            // 標題副標調整
+            const subTitle = document.querySelector('#accountMgmtModal p.text-slate-400');
+            if (subTitle) subTitle.innerText = isAdmin ? '管理員專用' : '我的帳號';
+            // 新增帳號 section：只有 admin 顯示
+            const createSection = document.getElementById('accSectionCreate');
+            if (createSection) createSection.style.display = isAdmin ? '' : 'none';
+            // 現有帳號列表 section：只有 admin 顯示
+            const listSection = document.getElementById('accSectionList');
+            if (listSection) listSection.style.display = isAdmin ? '' : 'none';
+            // 我的帳號資訊 section：所有人顯示
+            const myInfoSection = document.getElementById('accSectionMyInfo');
+            if (myInfoSection) {
+                myInfoSection.style.display = '';
+                document.getElementById('myAccName').innerText = loggedInProfile.name || '—';
+                document.getElementById('myAccEmail').innerText = loggedInProfile.email || '—';
+                document.getElementById('myAccRole').innerText = isAdmin ? '管理員' : '一般人員';
+            }
+            if (isAdmin) await loadAccountList();
             openModal('accountMgmtModal');
         }
 
@@ -2229,7 +2402,7 @@
                 await setDoc(doc(settingsCol, 'sysOptions'), sysOptions);
             } catch(e) {
                 console.error('saveOpt error:', e);
-                showSysMsg(e.code === 'permission-denied' ? '權限不足，請確認帳號為管理員角色' : '儲存失敗：' + e.message, 'error');
+                showSysMsg(e.code === 'permission-denied' ? '權限不足，無法儲存設定' : '儲存失敗：' + e.message, 'error');
                 const snap = await getDoc(doc(settingsCol, 'sysOptions'));
                 if (snap.exists()) { sysOptions = snap.data(); renderDropdowns(); renderOptionEditor(); }
             }
@@ -2718,6 +2891,8 @@
                     let targetStatus = '在庫';
                     if (item.mouldStatus === '運回給客人' || item.mouldStatus === '除帳報廢，已清運') {
                         targetStatus = '永久出庫';
+                    } else if (item.mouldStatus === '移轉量產') {
+                        targetStatus = '出庫';
                     }
                     const newItem = { ...item, status: targetStatus, modUser: user, modTime: timeStr, modAction: 'Excel 匯入', history: [{ type: 'Excel 匯入', user, time: timeStr }] };
                     await setDoc(doc(inventoryCol, item.id), newItem);
@@ -2792,6 +2967,7 @@
             const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
             
             XLSX.writeFile(workbook, `模治具清單_匯出_${dateStr}.xlsx`);
+            setLastExportTs();
         }
 
         function handleFlow(type) {
@@ -2874,6 +3050,7 @@
             // 判斷是否選擇了會觸發永久出庫的狀態，且尚未是永久出庫
             const newMouldStatus = currentInputs.mouldStatus;
             const willTriggerPermOut = (newMouldStatus === '運回給客人' || newMouldStatus === '除帳報廢，已清運') && i.status !== '永久出庫';
+                const willTriggerAutoOut = newMouldStatus === '移轉量產' && i.status !== '出庫' && i.status !== '永久出庫';
 
             if (willTriggerPermOut) {
                 pendingAction = { action: 'update', withPermOut: true };
@@ -2889,6 +3066,21 @@
                     if (authModal) authModal.insertBefore(permOutNotice, authModal.querySelector('p'));
                 }
                 permOutNotice.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg><span class="text-sm font-black text-amber-700">模治具狀態設定為「${newMouldStatus}」，確認後將修改為<strong>永久出庫</strong>並記錄於異動歷程。</span>`;
+                permOutNotice.classList.remove('hidden');
+            } else if (willTriggerAutoOut) {
+                pendingAction = { action: 'update', withPermOut: false };
+                document.getElementById('authModalTitle').innerText = '確認變更 + 出庫';
+                document.getElementById('authSubmitBtn').innerText = '確認修改並出庫';
+                let permOutNotice = document.getElementById('authPermOutNotice');
+                if (!permOutNotice) {
+                    permOutNotice = document.createElement('div');
+                    permOutNotice.id = 'authPermOutNotice';
+                    permOutNotice.className = 'mb-4 flex items-center gap-2 bg-blue-50 border border-blue-300 rounded-2xl px-4 py-3 text-left';
+                    const authModal = document.querySelector('#authModal .bg-white');
+                    if (authModal) authModal.insertBefore(permOutNotice, authModal.querySelector('p'));
+                }
+                permOutNotice.className = 'mb-4 flex items-center gap-2 bg-blue-50 border border-blue-300 rounded-2xl px-4 py-3 text-left';
+                permOutNotice.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span class="text-sm font-black text-blue-700">模治具狀態設定為「移轉量產」，確認後將自動設為<strong>出庫</strong>狀態。</span>`;
                 permOutNotice.classList.remove('hidden');
             } else {
                 pendingAction = { action: 'update', withPermOut: false };
@@ -2941,7 +3133,8 @@
             if (!document.getElementById('newId').value || !document.getElementById('newName').value) return alert('編號與名稱為必要欄位');
             const newMouldStatus = document.getElementById('newMouldStatus')?.value;
             const autoPermOut = (newMouldStatus === '運回給客人' || newMouldStatus === '除帳報廢，已清運');
-            const resolvedStatus = statusOverride || (autoPermOut ? '永久出庫' : '在庫');
+            const autoOut = newMouldStatus === '移轉量產';
+            const resolvedStatus = statusOverride || (autoPermOut ? '永久出庫' : (autoOut ? '出庫' : '在庫'));
             pendingAction = { action: 'create', statusOverride: resolvedStatus }; 
             // 修改10：顯示入庫確認彈窗
             const newId = document.getElementById('newId').value.trim();
@@ -2953,6 +3146,10 @@
             const permOutWarn = document.getElementById('createConfirmPermOutWarn');
             if (autoPermOut) {
                 permOutWarn.classList.remove('hidden');
+                document.getElementById('createConfirmPermOutWarnText').innerHTML = '注意：選擇的狀態將使此模治具<strong>修改為永久出庫</strong>，入庫後將直接記錄為永久出庫。';
+            } else if (autoOut) {
+                permOutWarn.classList.remove('hidden');
+                document.getElementById('createConfirmPermOutWarnText').innerHTML = '注意：選擇「移轉量產」，入庫後將自動設為<strong>出庫</strong>狀態。';
             } else {
                 permOutWarn.classList.add('hidden');
             }
@@ -3023,7 +3220,7 @@
                     alert(`批量操作完成！共 ${done} 筆已${batchType}${skip > 0 ? `，跳過 ${skip} 筆（永久出庫）` : ''}。`);
                     return;
                 } else if (pendingAction.action === 'batchEdit') {
-                    const { ids, fields, permOut } = pendingAction;
+                    const { ids, fields, permOut, autoOut } = pendingAction;
                     let done = 0;
                     for (const bid of ids) {
                         const item = inventory.find(x => x.id === bid);
@@ -3034,12 +3231,15 @@
                         const changedKeys = Object.keys(fields).map(k => { const orig = item[k] || '（空）'; const next = fields[k] || '（空）'; return `${labels[k] || k}: ${orig} → ${next}`; }).join('、');
                         
                         if (permOut) {
-                            // 記錄修改歷程
                             updatedData.history.push({ type: `修改 (${changedKeys})`, user, time: timeStr });
-                            // 記錄永久出庫歷程
                             updatedData.status = '永久出庫';
                             updatedData.history.push({ type: '永久出庫', user, time: timeStr });
                             updatedData.modAction = `修改並永久出庫`;
+                        } else if (autoOut) {
+                            updatedData.history.push({ type: `修改 (${changedKeys})`, user, time: timeStr });
+                            updatedData.status = '出庫';
+                            updatedData.history.push({ type: '出庫 (移轉量產)', user, time: timeStr });
+                            updatedData.modAction = `修改並出庫 (移轉量產)`;
                         } else {
                             updatedData.modAction = `批量修改欄位`;
                             updatedData.history.push({ type: `批量修改欄位 (${changedKeys})`, user, time: timeStr });
@@ -3049,7 +3249,7 @@
                     }
                     batchSelected.clear();
                     closeModal('authModal');
-                    alert(permOut ? `批量修改並永久出庫完成！共 ${done} 筆已更新並設為永久出庫。` : `批量修改完成！共 ${done} 筆已更新。`);
+                    alert(permOut ? `批量修改並永久出庫完成！共 ${done} 筆已更新並設為永久出庫。` : (autoOut ? `批量修改並出庫完成！共 ${done} 筆已更新並設為出庫（移轉量產）。` : `批量修改完成！共 ${done} 筆已更新。`));
                     return;
                 } else if (pendingAction.action === 'flow') {
                     const i = inventory.find(x => x.id === currentId);
@@ -3140,13 +3340,27 @@
 
                     if (withPermOut) {
                         updatedData.status = '永久出庫';
-                    } else if (i.status === '永久出庫') {
-                        // 修改5: 若原本是永久出庫（因運回給客人/已清運而觸發），
-                        // 但現在 mouldStatus 已改回非觸發狀態，則恢復為在庫
+                    } else {
                         const newMouldStatus = newVals.mouldStatus;
+                        const isNowAutoOut = newMouldStatus === '移轉量產';
                         const wasPermOutStatus = (i.mouldStatus === '運回給客人' || i.mouldStatus === '除帳報廢，已清運');
+                        const wasAutoOutStatus = (i.mouldStatus === '移轉量產');
                         const isNowNormalStatus = !(newMouldStatus === '運回給客人' || newMouldStatus === '除帳報廢，已清運');
-                        if (wasPermOutStatus && isNowNormalStatus) {
+
+                        if (isNowAutoOut && i.status !== '出庫' && i.status !== '永久出庫') {
+                            // 移轉量產 → 自動出庫
+                            updatedData.status = '出庫';
+                        } else if (i.status === '永久出庫') {
+                            // 原本永久出庫：依新狀態決定
+                            if (isNowAutoOut) {
+                                updatedData.status = '出庫';
+                            } else if (wasPermOutStatus && isNowNormalStatus) {
+                                updatedData.status = '在庫';
+                            } else if (wasAutoOutStatus && !isNowAutoOut && isNowNormalStatus) {
+                                updatedData.status = '在庫';
+                            }
+                        } else if (wasAutoOutStatus && !isNowAutoOut && i.status === '出庫' && isNowNormalStatus) {
+                            // 原本移轉量產（出庫），現在改為其他正常狀態 → 恢復在庫
                             updatedData.status = '在庫';
                         }
                     }
@@ -3164,6 +3378,8 @@
                     updatedData.history.push({ type: historyType, user, time: timeStr });
                     if (withPermOut) {
                         updatedData.history.push({ type: '永久出庫', user, time: timeStr });
+                    } else if (updatedData.status === '出庫' && newMouldStatus === '移轉量產' && i.status !== '出庫') {
+                        updatedData.history.push({ type: '出庫 (移轉量產)', user, time: timeStr });
                     }
 
                     if (newId !== currentId) {
@@ -3321,11 +3537,14 @@
                     const wrap = document.createElement('div');
                     wrap.className = 'bg-slate-50 px-4 py-2 rounded-xl text-xs font-bold border flex items-center gap-2';
                     wrap.textContent = v;
-                    const btn = document.createElement('button');
-                    btn.className = 'text-slate-300 hover:text-red-500 font-black';
-                    btn.textContent = '×';
-                    btn.addEventListener('click', () => delOptConfirm(type, v));
-                    wrap.appendChild(btn);
+                    // 刪除按鈕只有 admin 才顯示
+                    if (loggedInProfile && loggedInProfile.role === 'admin') {
+                        const btn = document.createElement('button');
+                        btn.className = 'text-slate-300 hover:text-red-500 font-black';
+                        btn.textContent = '×';
+                        btn.addEventListener('click', () => delOptConfirm(type, v));
+                        wrap.appendChild(btn);
+                    }
                     container.appendChild(wrap);
                 });
             }); 
@@ -3344,7 +3563,12 @@
             }
         }
         
-        function addOpt(type, id) { 
+        function addOpt(type, id) {
+            if (!currentUser) { showSysMsg('請先登入才能新增選項', 'error'); return; }
+            // 一般人員只能新增 borrowPersons
+            if (loggedInProfile && loggedInProfile.role !== 'admin' && type !== 'borrowPersons') {
+                showSysMsg('一般人員僅可新增「借出/歸還人員」選項', 'warn'); return;
+            }
             const v = document.getElementById(id).value.trim();
             if (!sysOptions[type]) sysOptions[type] = [];
             if(v && !sysOptions[type].includes(v)) { 
@@ -3352,7 +3576,7 @@
                 document.getElementById(id).value = ''; 
                 saveOpt();
                 logOptChange('新增', type, v);
-                renderOptionEditor(); // 新增後重新渲染
+                renderOptionEditor();
                 showSysMsg(`已新增選項「${v}」`, 'ok');
             } else if (v && sysOptions[type].includes(v)) {
                 showSysMsg(`「${v}」已存在於清單中`, 'warn');
@@ -4368,6 +4592,24 @@
             icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
         }
 
+                function openSysConfigModal() {
+            const isAdmin = loggedInProfile && loggedInProfile.role === 'admin';
+            // 非 borrowPersons 的新增區塊：一般人員隱藏
+            ['accSectionOpt1','accSectionOpt2','accSectionOpt3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isAdmin ? '' : 'none';
+            });
+            // 一般人員隱藏前3個 section，只留 borrowPersons
+            const sec1 = document.getElementById('optSection-categories');
+            const sec2 = document.getElementById('optSection-mouldStatuses');
+            const sec3 = document.getElementById('optSection-sites');
+            if (sec1) sec1.style.display = isAdmin ? '' : 'none';
+            if (sec2) sec2.style.display = isAdmin ? '' : 'none';
+            if (sec3) sec3.style.display = isAdmin ? '' : 'none';
+            openModal('sysConfigModal');
+            loadOptHistory();
+        }
+
                 Object.assign(window, {
             openModal, closeModal, renderTable, handleSort, openPanel, cancelEdit,
             openAssetPage, updateAssetLinkBtn, autoFetchKeeper, fetchKeeperFromSite, openImportModal, resetImport, 
@@ -4383,7 +4625,7 @@
             handleResizeMouseDown, handlePermOut, togglePermOutBtn, toggleNewPermOutBtn,
             toggleRowSelect, toggleSelectAll, clearBatchSelection, executeBatchFlow,
             refreshFlowBtnState, openBatchEditModal, executeBatchEdit, hasUnsavedChanges, checkBatchPermOut,
-            toggleMobileMenu, closeMobileMenu, doLogin, doLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
+            toggleMobileMenu, closeMobileMenu, openSysConfigModal, doLogin, doLogout, doLogoutDirect, exportThenLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
             toggleLoginHistory, showLoginHistory, filterLoginHistory, selectLoginHistory, removeLoginHistory, clearLoginHistory, togglePwVisible, enablePwToggle, hidePwOnBlur,
             authFlowShowDropdown, authFlowToggleDropdown, authFlowFilterPersons, authFlowSelectPerson, authFlowAddPerson,
             showSysMsg, logOptChange, loadOptHistory
