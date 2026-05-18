@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模治具管理系統 V4 - 雲端共用版</title>
+    <title>模治具庫房管理系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -106,7 +106,7 @@
                 </div>
                 <div class="min-w-0">
                     <h1 class="text-sm font-black tracking-tighter italic leading-none truncate">
-                        模治具管理系統 <span class="text-indigo-400">V4</span>
+                        模治具庫房管理系統
                         <span id="cloudStatus" class="ml-2 text-[9px] bg-slate-700/50 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded-full font-bold inline-flex items-center gap-1 align-middle transition-all"><span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-pulse"></span>連線中</span>
                     </h1>
                     <span class="text-[9px] font-bold text-slate-400 uppercase hidden sm:block">Tooling Management System</span>
@@ -114,16 +114,10 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <!-- 已登入使用者資訊（桌機顯示） -->
-                <div id="headerUserBar" class="hidden md:flex items-center gap-2">
-                    <div class="text-right">
-                        <div id="headerUserName" class="text-xs font-black text-white leading-tight"></div>
-                        <div id="headerUserRole" class="text-[9px] text-indigo-300 font-bold"></div>
-                    </div>
-                    <button onclick="openAccountModal()" class="bg-slate-700 hover:bg-slate-600 p-1.5 rounded-xl transition-all" title="帳號設定">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    </button>
-                    <button onclick="doLogout()" class="bg-red-600 hover:bg-red-500 px-2 py-1.5 rounded-xl text-[10px] font-black text-white transition-all">登出</button>
+                <!-- 已登入使用者資訊（完全隱藏，登出整合至縮疊選單） -->
+                <div id="headerUserBar" class="hidden items-center gap-2">
+                    <div id="headerUserName" class="hidden"></div>
+                    <div id="headerUserRole" class="hidden"></div>
                 </div>
                 <!-- 漢堡按鈕（手機顯示） -->
                 <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden bg-slate-700 p-2 rounded-xl hover:bg-slate-600 transition-all">
@@ -683,7 +677,7 @@
                 <div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
-                <h2 class="text-2xl font-black text-slate-800">模治具管理系統</h2>
+                <h2 class="text-2xl font-black text-slate-800">模治具庫房管理系統</h2>
                 <p class="text-sm text-slate-400 font-bold mt-1">請使用您的帳號登入</p>
             </div>
             <div class="space-y-4">
