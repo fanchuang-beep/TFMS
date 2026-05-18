@@ -95,60 +95,83 @@
 
     <div id="mainApp" class="hidden">
     <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-2xl">
-        <div class="max-w-[1800px] mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 p-2.5 rounded-2xl shadow-lg shadow-indigo-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <!-- 主列：logo + 漢堡 + 使用者 -->
+        <div class="max-w-[1800px] mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <!-- Logo -->
+            <div class="flex items-center gap-2 min-w-0">
+                <div class="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
                 </div>
-                <div>
-                    <h1 class="text-xl font-black tracking-tighter italic leading-none">
-                        模治具庫房管理系統 <span class="text-indigo-400 font-black">V4</span>
-                        <span id="cloudStatus" class="ml-3 text-[10px] bg-slate-700/50 text-slate-300 border border-slate-600 px-2 py-0.5 rounded-full font-bold inline-flex items-center gap-1 align-middle transition-all"><span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-pulse"></span>連線中</span>
+                <div class="min-w-0">
+                    <h1 class="text-sm font-black tracking-tighter italic leading-none truncate">
+                        模治具管理系統 <span class="text-indigo-400">V4</span>
+                        <span id="cloudStatus" class="ml-2 text-[9px] bg-slate-700/50 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded-full font-bold inline-flex items-center gap-1 align-middle transition-all"><span class="w-1.5 h-1.5 bg-slate-400 rounded-full animate-pulse"></span>連線中</span>
                     </h1>
-                    <span class="text-[10px] font-bold text-slate-400 tracking-widest uppercase">Tooling Management System (Cloud Sync)</span>
+                    <span class="text-[9px] font-bold text-slate-400 uppercase hidden sm:block">Tooling Management System</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 bg-slate-800 p-1.5 rounded-2xl border border-slate-700">
-                <button id="accountMgmtBtn" onclick="openAccountModal()" class="bg-slate-700 px-4 py-2.5 rounded-xl hover:bg-slate-600 text-[11px] font-black transition-all" style="display:none">帳號管理</button>
-                <button onclick="openImportModal()" class="bg-emerald-600 px-4 py-2.5 rounded-xl hover:bg-emerald-500 text-[11px] font-black flex items-center gap-2 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Excel 匯入
-                </button>
-                <button onclick="exportExcel()" class="bg-blue-600 px-4 py-2.5 rounded-xl hover:bg-blue-500 text-[11px] font-black flex items-center gap-2 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4 4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Excel 匯出
-                </button>
-                <button id="sysConfigBtn" onclick="openModal('sysConfigModal'); loadOptHistory();" class="bg-indigo-600 px-4 py-2.5 rounded-xl hover:bg-indigo-500 text-[11px] font-black flex items-center gap-2 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    </svg>
-                    選單設定
-                </button>
-                <button onclick="openMapModal()" class="bg-amber-500 px-4 py-2.5 rounded-xl hover:bg-amber-400 text-[11px] font-black flex items-center gap-2 transition-all text-white shadow-lg shadow-amber-500/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                    </svg>
-                    平面圖
-                </button>
-            </div>
-            <!-- 已登入使用者資訊 - 右側顯示 -->
-            <div id="headerUserBar" class="hidden items-center gap-2">
-                <div class="text-right mr-1">
-                    <div id="headerUserName" class="text-sm font-black text-white leading-tight"></div>
-                    <div id="headerUserRole" class="text-[10px] text-indigo-300 font-bold"></div>
+            <div class="flex items-center gap-2">
+                <!-- 已登入使用者資訊（手機只顯示名字） -->
+                <div id="headerUserBar" class="hidden items-center gap-2">
+                    <div class="text-right hidden sm:block">
+                        <div id="headerUserName" class="text-xs font-black text-white leading-tight"></div>
+                        <div id="headerUserRole" class="text-[9px] text-indigo-300 font-bold"></div>
+                    </div>
+                    <button onclick="openAccountModal()" class="bg-slate-700 hover:bg-slate-600 p-1.5 rounded-xl transition-all" title="帳號設定">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </button>
+                    <button onclick="doLogout()" class="bg-red-600 hover:bg-red-500 px-2 py-1.5 rounded-xl text-[10px] font-black text-white transition-all">登出</button>
                 </div>
-                <button onclick="openAccountModal()" class="bg-slate-700 hover:bg-slate-600 p-2 rounded-xl transition-all" title="帳號設定">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <!-- 漢堡按鈕（手機顯示） -->
+                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden bg-slate-700 p-2 rounded-xl hover:bg-slate-600 transition-all">
+                    <svg id="mobileMenuIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
                 </button>
-                <button onclick="doLogout()" class="bg-red-600 hover:bg-red-500 px-3 py-2 rounded-xl text-[11px] font-black text-white transition-all">登出</button>
+                <!-- 桌機版按鈕群 -->
+                <div class="hidden md:flex items-center gap-2 bg-slate-800 p-1.5 rounded-2xl border border-slate-700">
+                    <button id="accountMgmtBtn" onclick="openAccountModal()" class="bg-slate-700 px-4 py-2.5 rounded-xl hover:bg-slate-600 text-[11px] font-black transition-all" style="display:none">帳號管理</button>
+                    <button onclick="openImportModal()" class="bg-emerald-600 px-4 py-2.5 rounded-xl hover:bg-emerald-500 text-[11px] font-black flex items-center gap-2 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        Excel 匯入
+                    </button>
+                    <button onclick="exportExcel()" class="bg-blue-600 px-4 py-2.5 rounded-xl hover:bg-blue-500 text-[11px] font-black flex items-center gap-2 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4 4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Excel 匯出
+                    </button>
+                    <button id="sysConfigBtn" onclick="openModal('sysConfigModal'); loadOptHistory();" class="bg-indigo-600 px-4 py-2.5 rounded-xl hover:bg-indigo-500 text-[11px] font-black flex items-center gap-2 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
+                        選單設定
+                    </button>
+                    <button onclick="openMapModal()" class="bg-amber-500 px-4 py-2.5 rounded-xl hover:bg-amber-400 text-[11px] font-black flex items-center gap-2 transition-all text-white shadow-lg shadow-amber-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                        平面圖
+                    </button>
+                </div>
             </div>
+        </div>
+        <!-- 手機展開選單 -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-800 border-t border-slate-700 px-4 py-3 flex flex-col gap-2">
+            <button id="mobileAccountMgmtBtn" onclick="openAccountModal(); closeMobileMenu()" class="bg-slate-700 px-4 py-3 rounded-xl hover:bg-slate-600 text-sm font-black transition-all text-left" style="display:none">👤 帳號管理</button>
+            <button onclick="openImportModal(); closeMobileMenu()" class="bg-emerald-600 px-4 py-3 rounded-xl hover:bg-emerald-500 text-sm font-black flex items-center gap-3 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                Excel 匯入
+            </button>
+            <button onclick="exportExcel(); closeMobileMenu()" class="bg-blue-600 px-4 py-3 rounded-xl hover:bg-blue-500 text-sm font-black flex items-center gap-3 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4 4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                Excel 匯出
+            </button>
+            <button id="mobileConfigBtn" onclick="openModal('sysConfigModal'); loadOptHistory(); closeMobileMenu()" class="bg-indigo-600 px-4 py-3 rounded-xl hover:bg-indigo-500 text-sm font-black flex items-center gap-3 transition-all" style="display:none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /></svg>
+                選單設定
+            </button>
+            <button onclick="openMapModal(); closeMobileMenu()" class="bg-amber-500 px-4 py-3 rounded-xl hover:bg-amber-400 text-sm font-black flex items-center gap-3 transition-all text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+                平面圖
+            </button>
         </div>
     </header>
 
@@ -620,15 +643,15 @@
             </div>
             
             <!-- Body -->
-            <div class="flex-1 flex flex-col md:flex-row gap-6 overflow-hidden">
-                <!-- Side Panel (Moved to Left) -->
-                <div class="w-full md:w-80 bg-slate-50 border-2 border-slate-200 rounded-[2.5rem] p-6 flex flex-col h-full shadow-inner overflow-y-auto custom-scroll shrink-0" id="mapSidePanelContent">
+            <div class="flex-1 flex flex-col md:flex-row gap-2 sm:gap-6 overflow-hidden min-h-0">
+                <!-- Side Panel：手機固定小高度，桌機左側欄 -->
+                <div class="w-full md:w-72 bg-slate-50 border-2 border-slate-200 rounded-2xl p-3 sm:p-6 flex flex-col md:h-full max-h-32 md:max-h-none shadow-inner overflow-y-auto custom-scroll shrink-0" id="mapSidePanelContent">
                     <!-- Dynamic content rendered via JS -->
                 </div>
 
-                <!-- Grid Area (Moved to Right) -->
-                <div class="flex-1 bg-slate-100 border-2 border-slate-200 rounded-[2.5rem] overflow-auto custom-scroll relative flex items-start justify-start shadow-inner">
-                    <div id="mapGrid" class="grid gap-1 transition-all w-max h-max m-auto p-12 relative select-none" onmousedown="handleGridMouseDown(event)">
+                <!-- Grid Area：手機填滿剩餘空間 -->
+                <div class="flex-1 bg-slate-100 border-2 border-slate-200 rounded-2xl overflow-auto custom-scroll relative flex items-start justify-start shadow-inner min-h-0">
+                    <div id="mapGrid" class="grid gap-1 transition-all w-max h-max m-auto p-3 sm:p-12 relative select-none" onmousedown="handleGridMouseDown(event)">
                         <!-- Area 拖曳預覽框 (繪製時或框選時使用) -->
                         <div id="areaPreview" class="hidden border-[3px] rounded-md z-30 pointer-events-none" style="grid-area: 1 / 1 / 2 / 2;"></div>
                         <!-- JS 將會在這裡動態渲染背景格子以及存放位置方塊 (Blocks) -->
@@ -1762,9 +1785,13 @@
                 // 系統設定按鈕只有 admin 可見
                 const cfgBtn = document.getElementById('sysConfigBtn');
                 if (cfgBtn) cfgBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
+                    const mobileCfgBtn = document.getElementById('mobileConfigBtn');
+                    if (mobileCfgBtn) mobileCfgBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
                 // 帳號管理按鈕只有 admin 可見
                 const accBtn = document.getElementById('accountMgmtBtn');
                 if (accBtn) accBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
+                    const mobileAccBtn = document.getElementById('mobileAccountMgmtBtn');
+                    if (mobileAccBtn) mobileAccBtn.style.display = loggedInProfile.role === 'admin' ? '' : 'none';
                 setupListeners();
             } else {
                 currentUser = null;
@@ -4273,7 +4300,27 @@
             handleFlow('永久出庫');
         }
 
-        Object.assign(window, {
+        // ── 手機漢堡選單 ──────────────────────────────────────
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('mobileMenuIcon');
+            const isOpen = !menu.classList.contains('hidden');
+            if (isOpen) {
+                menu.classList.add('hidden');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+            } else {
+                menu.classList.remove('hidden');
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
+            }
+        }
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('mobileMenuIcon');
+            menu.classList.add('hidden');
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+        }
+
+                Object.assign(window, {
             openModal, closeModal, renderTable, handleSort, openPanel, cancelEdit,
             openAssetPage, updateAssetLinkBtn, autoFetchKeeper, fetchKeeperFromSite, openImportModal, resetImport, 
             previewExcel, executeImport, exportExcel, doExportExcel, doImportDirectly, handleFlow, triggerUpdate, 
@@ -4288,7 +4335,7 @@
             handleResizeMouseDown, handlePermOut, togglePermOutBtn, toggleNewPermOutBtn,
             toggleRowSelect, toggleSelectAll, clearBatchSelection, executeBatchFlow,
             refreshFlowBtnState, openBatchEditModal, executeBatchEdit, hasUnsavedChanges, checkBatchPermOut,
-            doLogin, doLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
+            toggleMobileMenu, closeMobileMenu, doLogin, doLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
             toggleLoginHistory, showLoginHistory, filterLoginHistory, selectLoginHistory, removeLoginHistory, clearLoginHistory, togglePwVisible, enablePwToggle, hidePwOnBlur,
             authFlowShowDropdown, authFlowToggleDropdown, authFlowFilterPersons, authFlowSelectPerson, authFlowAddPerson,
             showSysMsg, logOptChange, loadOptHistory
