@@ -295,12 +295,12 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 <span class="text-sm font-bold text-slate-500">資料未修改。可直接按【執行出庫】或【執行回庫】執行操作；若需修改資料請先編輯後按【確認變更】。</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button onclick="handleFlow('出庫')" id="btnOut" class="py-4 bg-red-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-red-700 transition-all active:scale-95">執行出庫</button>
-                                <button onclick="handleFlow('在庫')" id="btnIn" class="py-4 bg-green-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-green-700 transition-all active:scale-95">執行回庫</button>
-                                <button onclick="handlePermOut()" id="btnPermOut" class="hidden col-span-2 py-4 bg-slate-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-slate-700 transition-all active:scale-95">永久出庫</button>
-                                <button onclick="cancelEdit()" id="btnCancelEdit" class="py-4 bg-slate-200 text-slate-400 rounded-2xl font-bold shadow hover:bg-slate-300 transition-all active:scale-95 opacity-40 cursor-not-allowed pointer-events-none">取消變更</button>
-                                <button onclick="triggerUpdate()" id="btnSave" class="py-4 bg-slate-300 text-slate-500 rounded-2xl font-bold shadow-lg transition-all active:scale-95 opacity-40 cursor-not-allowed pointer-events-none">確認變更</button>
+                            <div class="grid grid-cols-2 gap-3" style="display:grid!important;grid-template-columns:1fr 1fr;">
+                                <button onclick="handleFlow('出庫')" id="btnOut" class="w-full py-4 bg-red-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-red-700 transition-all active:scale-95">執行出庫</button>
+                                <button onclick="handleFlow('在庫')" id="btnIn" class="w-full py-4 bg-green-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-green-700 transition-all active:scale-95">執行回庫</button>
+                                <button onclick="handlePermOut()" id="btnPermOut" class="hidden w-full py-4 bg-slate-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-slate-700 transition-all active:scale-95" style="grid-column:span 2">永久出庫</button>
+                                <button onclick="cancelEdit()" id="btnCancelEdit" class="w-full py-4 bg-slate-200 text-slate-400 rounded-2xl font-bold shadow hover:bg-slate-300 transition-all active:scale-95 opacity-40 cursor-not-allowed pointer-events-none">取消變更</button>
+                                <button onclick="triggerUpdate()" id="btnSave" class="w-full py-4 bg-slate-300 text-slate-500 rounded-2xl font-bold shadow-lg transition-all active:scale-95 opacity-40 cursor-not-allowed pointer-events-none">確認變更</button>
                             </div>
                         </div>
                     </div>
