@@ -271,6 +271,12 @@
                             <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
                                 <div class="md:col-span-2"><label class="field-label">存放地點</label><select id="editLocationSite" class="field-input sys-opt-site" onchange="refreshFlowBtnState()"></select></div>
                                 <div class="md:col-span-2"><label class="field-label">存放位置</label><input type="text" id="editLocationPos" class="field-input" placeholder="例如:A01" oninput="refreshFlowBtnState()"></div>
+                                <div class="md:col-span-2">
+                                    <label class="field-label">借出人員 <span class="text-[9px] text-slate-400 font-bold ml-1">(出庫時自動填入，不可手動編輯)</span></label>
+                                    <div id="editBorrowPersonDisplay" class="field-input bg-slate-50 text-slate-500 cursor-not-allowed select-none min-h-[42px] flex items-center gap-2">
+                                        <span id="editBorrowPersonText" class="font-bold">—</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -505,6 +511,8 @@
                                 <th class="p-3">地點</th>
                                 <th class="p-3">位置</th>
                                 <th class="p-3">備註</th>
+                                <th class="p-3 text-red-400">借出人員</th>
+                                <th class="p-3 text-green-600">歸還人員</th>
                             </tr>
                         </thead>
                         <tbody id="importPreviewTable" class="text-slate-600 bg-white"></tbody>
@@ -527,8 +535,12 @@
                     <div>● 資產編號</div>
                     <div>● 所屬配件</div>
                     <div>● 保管人</div>
+                    <div>● 模治具狀態</div>
                     <div>● 存放地點</div>
+                    <div>● 存放位置</div>
                     <div>● 備註</div>
+                    <div class="text-red-400">● 借出人員</div>
+                    <div class="text-green-600">● 歸還人員</div>
                 </div>
             </div>
         </div>
@@ -1384,7 +1396,7 @@
             if (!currentId) return;
             const i = inventory.find(x => x.id === currentId);
             if (!i) return;
-            // 重新填入所有欄位（同 openPanel）
+            _loadingPanel = true;
             document.getElementById('editId').value = i.id;
             document.getElementById('editCategory').value = i.category;
             document.getElementById('editName').value = i.name;
@@ -1398,22 +1410,40 @@
             document.getElementById('editNote').value = i.note || '';
             updateAssetLinkBtn(i.assetId, 'btnEditKeeperLink');
             togglePermOutBtn();
-            // 清除永久出庫提示 hint（若有）
             document.getElementById('permOutHint')?.classList.add('hidden');
+            // 更新借出人員唯讀欄位
+            const borrowText2 = document.getElementById('editBorrowPersonText');
+            if (borrowText2) {
+                borrowText2.innerText = i.borrowPerson || '—';
+                borrowText2.className = i.borrowPerson ? 'font-black text-red-600' : 'font-bold text-slate-400';
+            }
+            // 更新 badge
+            const cancelBadge = document.getElementById('displayBadge');
+            if (cancelBadge) {
+                cancelBadge.innerText = i.status;
+                cancelBadge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${i.status === '在庫' ? 'status-badge-in' : (i.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}`;
+            }
+            _loadingPanel = false;
             setTimeout(refreshFlowBtnState, 0);
         }
 
         // ── 未存檔防呆：偵測是否有修改 ──
+        let _loadingPanel = false; // 防止 openPanel 填值時誤觸 dirty 判斷
+        let _forceReloadPanel = false; // 匯入後強制重載面板
+
         function hasUnsavedChanges() {
+            if (_loadingPanel) return false; // 載入面板期間不判斷
             if (!currentId) return false;
             const i = inventory.find(x => x.id === currentId);
             if (!i) return false;
+            const defaultMouldStatus = i.mouldStatus || (sysOptions.mouldStatuses[0] || '');
             const cur = {
                 id:           (document.getElementById('editId')?.value ?? '').trim(),
                 category:     document.getElementById('editCategory')?.value ?? '',
                 name:         (document.getElementById('editName')?.value ?? '').trim(),
                 assetId:      (document.getElementById('editAssetId')?.value ?? '').trim(),
                 parts:        (document.getElementById('editParts')?.value ?? '').trim(),
+                keeper:       (document.getElementById('editKeeperInput')?.value ?? '').trim(),
                 mouldStatus:  document.getElementById('editMouldStatus')?.value ?? '',
                 locationSite: document.getElementById('editLocationSite')?.value ?? '',
                 locationPos:  (document.getElementById('editLocationPos')?.value ?? '').trim(),
@@ -1425,12 +1455,17 @@
                 name:         (i.name || '').toString().trim(),
                 assetId:      (i.assetId || '').toString().trim(),
                 parts:        (i.parts || '').toString().trim(),
-                mouldStatus:  i.mouldStatus || (sysOptions.mouldStatuses[0] || ''),
+                keeper:       (i.keeper || '').toString().trim(),
+                mouldStatus:  defaultMouldStatus,
                 locationSite: i.locationSite || '',
                 locationPos:  (i.locationPos || '').toString().trim(),
                 note:         (i.note || '').toString().trim()
             };
-            return Object.keys(cur).some(k => cur[k] !== orig[k]);
+            const diffKeys = Object.keys(cur).filter(k => cur[k] !== orig[k]);
+            if (diffKeys.length > 0) {
+                console.log('[dirty]', diffKeys.map(k => `${k}: 表單="${cur[k]}" / DB="${orig[k]}"`).join(' | '));
+            }
+            return diffKeys.length > 0;
         }
 
         // ── 即時更新按鈕反灰 / 警示橫幅狀態 ──
@@ -1484,22 +1519,48 @@
             // 先全部隱藏 badge
             hide(unsavedBadge); hide(permOutBadge); hide(noChangeBadge);
 
+            // 恢復按鈕文字與 onclick
+            if (btnOut) {
+                btnOut.textContent = '執行出庫';
+                btnOut.onclick = () => handleFlow('出庫');
+                btnOut.classList.remove('bg-slate-400', 'hover:bg-slate-500');
+                btnOut.classList.add('bg-red-600', 'hover:bg-red-700');
+            }
+
+            const latestItem = inventory.find(x => x.id === currentId);
+            const isOut = latestItem && latestItem.status === '出庫';
+
+            // ── 取消變更 / 確認變更：只看 dirty ──
+            if (dirty) {
+                enable(btnSave); enable(btnCancel);
+            } else {
+                disable(btnSave); disable(btnCancel);
+            }
+
+            // ── 執行出庫 / 執行回庫：只看 status，不受 dirty 影響 ──
             if (isPermOut) {
-                // 已是永久出庫狀態：出庫/回庫按鈕停用
+                // 永久出庫：兩個都灰
                 if (permOutText) permOutText.innerHTML = '此模治具為<strong>永久出庫</strong>狀態，無法執行出庫 / 回庫。若需變更，請先修改模治具狀態並按【確認變更】。';
                 show(permOutBadge);
                 disable(btnOut); disable(btnIn);
-                if (dirty) { enable(btnSave); enable(btnCancel); } else { disable(btnSave); disable(btnCancel); }
             } else if (dirty) {
-                // 有未存檔修改：出庫/回庫停用，提示先存檔
+                // 修改中：出庫/回庫全部反灰，需先取消或確認變更
                 show(unsavedBadge);
                 disable(btnOut); disable(btnIn);
-                enable(btnSave); enable(btnCancel);
             } else {
-                // 無修改、非永久出庫：可正常出庫/回庫，存檔修改停用
+                // 無修改、非永久出庫
                 show(noChangeBadge);
-                enable(btnOut); enable(btnIn);
-                disable(btnSave); disable(btnCancel);
+                const noChangeTxt = noChangeBadge?.querySelector('span');
+                if (noChangeTxt) {
+                    noChangeTxt.textContent = isOut
+                        ? '目前為出庫狀態。可按【執行回庫】執行歸還；若需修改資料請先編輯後按【確認變更】。'
+                        : '目前為在庫狀態。可按【執行出庫】執行借出；若需修改資料請先編輯後按【確認變更】。';
+                }
+                if (isOut) {
+                    disable(btnOut); enable(btnIn);
+                } else {
+                    enable(btnOut); disable(btnIn);
+                }
             }
         }
 
@@ -1983,6 +2044,7 @@
                         '所屬配件': i.parts || '', '保管人': i.keeper || '依資產系統為準',
                         '模治具狀態': i.mouldStatus || '', '存放地點': i.locationSite || '',
                         '存放位置': i.locationPos || '', '備註': i.note || '',
+                        '借出人員': i.borrowPerson || '', '歸還人員': i.returnPerson || '',
                         '最後異動人員': i.modUser || '', '最後異動時間': i.modTime || ''
                     }));
                     const ws = XLSX.utils.json_to_sheet(exportData);
@@ -2187,23 +2249,55 @@
                     s.innerHTML = '<option value="all">所有位置</option>' + uniquePositions.map(v => `<option value="${v}">${v}</option>`).join('');
                     if (uniquePositions.includes(currentVal) || currentVal === 'all') s.value = currentVal;
                 });
-                // 若編輯面板開啟，且非使用者主動操作時，輕量更新（只更新歷程和狀態徽章）
+                // 若編輯面板開啟，同步面板資料和按鈕狀態
                 if (currentId && document.getElementById('actionPanel') && !document.getElementById('actionPanel').classList.contains('hidden')) {
                     const i = inventory.find(x => x.id === currentId);
                     if (i) {
-                        // 更新標頭資訊與歷程，但不重設欄位（避免打字中被中斷）
-                        renderHistory(i.history);
+                        // 更新標頭 badge
                         const badge = document.getElementById('displayBadge');
                         if (badge) {
                             badge.innerText = i.status;
                             badge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${i.status === '在庫' ? 'status-badge-in' : (i.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}`;
                         }
+                        // 更新最後異動資訊
                         const infoBox = document.getElementById('lastChangeInfo');
                         if (i.modUser && infoBox) {
                             if (window.innerWidth >= 768) { infoBox.classList.remove('hidden'); } else { infoBox.classList.add('hidden'); }
                             document.getElementById('lastChangeUser').innerText = i.modUser;
                             document.getElementById('lastChangeAction').innerText = i.modAction || '系統更新';
                             document.getElementById('lastChangeTime').innerText = i.modTime;
+                        }
+                        // 更新異動歷程
+                        renderHistory(i.history);
+                        // 同步借出人員唯讀欄位
+                        const bp = document.getElementById('editBorrowPersonText');
+                        if (bp) {
+                            bp.innerText = i.borrowPerson || '—';
+                            bp.className = i.borrowPerson ? 'font-black text-red-600' : 'font-bold text-slate-400';
+                        }
+                        // 使用者沒有在手動編輯時，或匯入後強制重載
+                        if (!hasUnsavedChanges() || _forceReloadPanel) {
+                            _forceReloadPanel = false;
+                            _loadingPanel = true;
+                            document.getElementById('editId').value = i.id;
+                            document.getElementById('editCategory').value = i.category;
+                            document.getElementById('editName').value = i.name || '';
+                            document.getElementById('editAssetId').value = i.assetId || '';
+                            document.getElementById('editParts').value = i.parts || '';
+                            const ekInput = document.getElementById('editKeeperInput');
+                            if (ekInput) ekInput.value = i.keeper || '';
+                            document.getElementById('editMouldStatus').value = i.mouldStatus || (sysOptions.mouldStatuses[0] || '');
+                            document.getElementById('editLocationSite').value = i.locationSite || '';
+                            document.getElementById('editLocationPos').value = i.locationPos || '';
+                            document.getElementById('editNote').value = i.note || '';
+                            updateAssetLinkBtn(i.assetId, 'btnEditKeeperLink');
+                            togglePermOutBtn();
+                            document.getElementById('permOutHint')?.classList.add('hidden');
+                            _loadingPanel = false;
+                            refreshFlowBtnState();
+                        } else {
+                            // 使用者正在編輯中，只更新按鈕狀態
+                            refreshFlowBtnState();
                         }
                     }
                 }
@@ -2653,7 +2747,11 @@
                     </td>
                     <td class="px-6 py-4"><div class="text-xs text-slate-400 truncate max-w-[200px]" title="${i.note || ''}">${i.note || '---'}</div></td>
                     <td class="px-6 py-4">
-                        ${i.status === '出庫' && i.borrowPerson ? `<div class="text-xs font-black text-red-600">${i.borrowPerson}</div><div class="text-[9px] text-red-400 font-bold">借出</div>` : (i.status === '在庫' && i.returnPerson ? `<div class="text-xs font-black text-green-600">${i.returnPerson}</div><div class="text-[9px] text-green-400 font-bold">歸還</div>` : '<span class="text-slate-300 text-[10px]">---</span>')}
+                        ${i.status === '出庫' && i.borrowPerson
+                            ? `<div class="text-xs font-black text-red-600">${i.borrowPerson}</div><div class="text-[9px] text-red-400 font-bold">借出</div>`
+                            : i.status === '在庫' && i.returnPerson
+                                ? `<div class="text-xs font-black text-green-600">${i.returnPerson}</div><div class="text-[9px] text-green-400 font-bold">歸還</div>`
+                                : '<span class="text-slate-300 text-[10px]">---</span>'}
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="text-[11px] font-black text-slate-700">${i.modUser || '---'}</div>
@@ -2670,6 +2768,7 @@
         function openPanel(id) {
             const i = inventory.find(x => x.id === id);
             if (!i) return;
+            _loadingPanel = true; // 開始載入，暫停 dirty 判斷
             currentId = id;
             document.getElementById('displayId').innerText = i.id;
             document.getElementById('editId').value = i.id;
@@ -2683,12 +2782,19 @@
             document.getElementById('editLocationPos').value = i.locationPos || '';
             document.getElementById('editNote').value = i.note || '';
             
-            // 修改3: 填入保管人欄位
+            // 填入保管人欄位
             const editKeeperInput = document.getElementById('editKeeperInput');
             if (editKeeperInput) editKeeperInput.value = i.keeper || '';
+            // 填入借出人員（唯讀）
+            const borrowText = document.getElementById('editBorrowPersonText');
+            if (borrowText) {
+                borrowText.innerText = i.borrowPerson || '—';
+                borrowText.className = i.borrowPerson ? 'font-black text-red-600' : 'font-bold text-slate-400';
+            }
             
             updateAssetLinkBtn(i.assetId, 'btnEditKeeperLink');
             togglePermOutBtn();
+            _loadingPanel = false; // 載入完成，恢復 dirty 判斷
             
             const infoBox = document.getElementById('lastChangeInfo');
             if (i.modUser) {
@@ -2871,7 +2977,9 @@
                         mouldStatus: row['模治具狀態'] || sysOptions.mouldStatuses[0],
                         locationSite: row['存放地點'] || sysOptions.sites[0],
                         locationPos: (row['存放位置'] || '').toString().trim(),
-                        note: (row['備註'] || '').toString().trim()
+                        note: (row['備註'] || '').toString().trim(),
+                        borrowPerson: (row['借出人員'] || '').toString().trim(),
+                        returnPerson: (row['歸還人員'] || '').toString().trim()
                     })).filter(i => i.id && i.name);
 
                     if (importBuffer.length === 0) {
@@ -2893,6 +3001,8 @@
                             <td class="p-3 text-slate-500 whitespace-nowrap">${i.locationSite}</td>
                             <td class="p-3 text-slate-500 whitespace-nowrap">${i.locationPos || '-'}</td>
                             <td class="p-3 text-slate-400 min-w-[150px] truncate max-w-[200px]" title="${i.note}">${i.note || '-'}</td>
+                            <td class="p-3 text-red-500 whitespace-nowrap">${i.borrowPerson || '-'}</td>
+                            <td class="p-3 text-green-600 whitespace-nowrap">${i.returnPerson || '-'}</td>
                         </tr>
                     `).join('');
                     
@@ -2944,9 +3054,20 @@
                 } else {
                     let targetStatus = '在庫';
                     if (item.mouldStatus === '運回給客人' || item.mouldStatus === '除帳報廢，已清運') {
+                        // 永久出庫，不管借出/歸還人員
                         targetStatus = '永久出庫';
                     } else if (item.mouldStatus === '移轉量產') {
+                        // 強制出庫，不管借出/歸還人員
                         targetStatus = '出庫';
+                    } else {
+                        // 列帳納管、除帳保留、除帳報廢：依借出/歸還人員判斷
+                        if (item.borrowPerson) {
+                            targetStatus = '出庫';
+                        } else if (item.returnPerson) {
+                            targetStatus = '在庫';
+                        } else {
+                            targetStatus = '在庫';
+                        }
                     }
                     const newItem = { ...item, status: targetStatus, modUser: user, modTime: timeStr, modAction: 'Excel 匯入', history: [{ type: 'Excel 匯入', user, time: timeStr }] };
                     await setDoc(doc(inventoryCol, item.id), newItem);
@@ -2963,6 +3084,10 @@
             }
             resetImport();
             closeModal('importModal');
+            // 匯入完成後，設旗標讓 onSnapshot 收到新資料時強制重載面板
+            if (currentId && document.getElementById('actionPanel') && !document.getElementById('actionPanel').classList.contains('hidden')) {
+                _forceReloadPanel = true;
+            }
         }
 
         let pendingExportConfirm = false;
@@ -2989,6 +3114,8 @@
                 '存放地點': i.locationSite || '',
                 '存放位置': i.locationPos || '',
                 '備註': i.note || '',
+                '借出人員': i.borrowPerson || '',
+                '歸還人員': i.returnPerson || '',
                 '最後異動人員': i.modUser || '',
                 '最後異動時間': i.modTime || ''
             }));
@@ -3338,6 +3465,36 @@
                     await setDoc(doc(inventoryCol, currentId), updatedData);
                     if (flowPersonInput) flowPersonInput.value = '';
                     document.getElementById('authFlowPersonArea')?.classList.add('hidden');
+                    // flow 完成後立即更新面板（不等 onSnapshot）
+                    _loadingPanel = true;
+                    const refreshed = updatedData;
+                    document.getElementById('editId').value = refreshed.id;
+                    document.getElementById('editCategory').value = refreshed.category;
+                    document.getElementById('editName').value = refreshed.name;
+                    document.getElementById('editAssetId').value = refreshed.assetId || '';
+                    document.getElementById('editParts').value = refreshed.parts || '';
+                    const ekInput2 = document.getElementById('editKeeperInput');
+                    if (ekInput2) ekInput2.value = refreshed.keeper || '';
+                    document.getElementById('editMouldStatus').value = refreshed.mouldStatus || sysOptions.mouldStatuses[0];
+                    document.getElementById('editLocationSite').value = refreshed.locationSite;
+                    document.getElementById('editLocationPos').value = refreshed.locationPos || '';
+                    document.getElementById('editNote').value = refreshed.note || '';
+                    // 更新 badge
+                    const flowBadge = document.getElementById('displayBadge');
+                    if (flowBadge) {
+                        flowBadge.innerText = refreshed.status;
+                        flowBadge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${refreshed.status === '在庫' ? 'status-badge-in' : (refreshed.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}`;
+                    }
+                    // 更新借出人員
+                    const bpEl = document.getElementById('editBorrowPersonText');
+                    if (bpEl) {
+                        bpEl.innerText = refreshed.borrowPerson || '—';
+                        bpEl.className = refreshed.borrowPerson ? 'font-black text-red-600' : 'font-bold text-slate-400';
+                    }
+                    togglePermOutBtn();
+                    updateAssetLinkBtn(refreshed.assetId, 'btnEditKeeperLink');
+                    _loadingPanel = false;
+                    setTimeout(refreshFlowBtnState, 0);
                 } else if (pendingAction.action === 'update') {
                     const i = inventory.find(x => x.id === currentId);
                     if (!i) return;
@@ -3489,6 +3646,16 @@
                             let targetStatus = '在庫';
                             if (item.mouldStatus === '運回給客人' || item.mouldStatus === '除帳報廢，已清運') {
                                 targetStatus = '永久出庫';
+                            } else if (item.mouldStatus === '移轉量產') {
+                                targetStatus = '出庫';
+                            } else {
+                                if (item.borrowPerson) {
+                                    targetStatus = '出庫';
+                                } else if (item.returnPerson) {
+                                    targetStatus = '在庫';
+                                } else {
+                                    targetStatus = '在庫';
+                                }
                             }
                             const newItem = { ...item, status: targetStatus, modUser: user, modTime: timeStr, modAction: 'Excel 匯入', history: [{ type: 'Excel 匯入', user, time: timeStr }] };
                             await setDoc(doc(inventoryCol, item.id), newItem);
