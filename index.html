@@ -3692,9 +3692,9 @@
             btnEdit.innerText = '編輯';
             btnEdit.className = 'px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-black text-xs hover:bg-indigo-700 transition-colors shadow-md';
             btnSave.classList.add('hidden');
-            btnExportMap.style.display='flex';
-            btnImportJson.style.display='flex';
-            btnExportJson.style.display='flex';
+            btnExportMap.style.display=window.innerWidth>=768?'flex':'none';
+            btnImportJson.style.display=window.innerWidth>=768?'flex':'none';
+            btnExportJson.style.display=window.innerWidth>=768?'flex':'none';
             const toolbar = document.getElementById('mapEditToolbar');
             if (toolbar) { toolbar.classList.add('hidden'); toolbar.classList.remove('flex'); }
             const mobileToolbar = document.getElementById('mapEditToolbarMobile');
@@ -3728,9 +3728,9 @@
             btnEdit.innerText = '編輯';
             btnEdit.className = 'px-5 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-md';
             btnSave.classList.add('hidden');
-            btnExportMap.style.display='flex';
-            btnImportJson.style.display='flex';
-            btnExportJson.style.display='flex';
+            btnExportMap.style.display=window.innerWidth>=768?'flex':'none';
+            btnImportJson.style.display=window.innerWidth>=768?'flex':'none';
+            btnExportJson.style.display=window.innerWidth>=768?'flex':'none';
             const toolbarEx = document.getElementById('mapEditToolbar');
             if (toolbarEx) { toolbarEx.classList.add('hidden'); toolbarEx.classList.remove('flex'); }
             const mobileToolbarEx = document.getElementById('mapEditToolbarMobile');
