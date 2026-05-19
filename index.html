@@ -651,7 +651,7 @@
                         <span class="text-xs font-black text-indigo-400 shrink-0">選取：</span>
                         <span id="mapSelectedBlockName" class="text-xs font-black text-indigo-700 max-w-[160px] truncate"></span>
                     </div>
-                    <!-- 編輯模式工具列 -->
+                    <!-- 編輯模式工具列（桌機） -->
                     <div id="mapEditToolbar" class="hidden items-center gap-1 shrink-0">
                         <div class="w-px h-4 bg-slate-300 mx-0.5"></div>
                         <button id="btnMapUndo" onclick="mapUndo()" disabled title="復原 (Ctrl+Z)"
@@ -3692,9 +3692,13 @@
             btnEdit.innerText = '編輯';
             btnEdit.className = 'px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-black text-xs hover:bg-indigo-700 transition-colors shadow-md';
             btnSave.classList.add('hidden');
-            btnExportMap.classList.add('hidden');
-            btnImportJson.classList.remove('hidden');
-            btnExportJson.classList.remove('hidden');
+            btnExportMap.style.display='flex';
+            btnImportJson.style.display='flex';
+            btnExportJson.style.display='flex';
+            const toolbar = document.getElementById('mapEditToolbar');
+            if (toolbar) { toolbar.classList.add('hidden'); toolbar.classList.remove('flex'); }
+            const mobileToolbar = document.getElementById('mapEditToolbarMobile');
+            if (mobileToolbar) { mobileToolbar.classList.add('hidden'); mobileToolbar.classList.remove('flex'); }
 
             openModal('mapModal');
             renderMap();
@@ -3724,10 +3728,14 @@
             btnEdit.innerText = '編輯';
             btnEdit.className = 'px-5 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-md';
             btnSave.classList.add('hidden');
-            btnExportMap.classList.add('hidden');
-            btnImportJson.classList.remove('hidden');
-            btnExportJson.classList.remove('hidden');
-            
+            btnExportMap.style.display='flex';
+            btnImportJson.style.display='flex';
+            btnExportJson.style.display='flex';
+            const toolbarEx = document.getElementById('mapEditToolbar');
+            if (toolbarEx) { toolbarEx.classList.add('hidden'); toolbarEx.classList.remove('flex'); }
+            const mobileToolbarEx = document.getElementById('mapEditToolbarMobile');
+            if (mobileToolbarEx) { mobileToolbarEx.classList.add('hidden'); mobileToolbarEx.classList.remove('flex'); }
+
             selectedBlocks = [];
             renderMap();
         }
@@ -3749,13 +3757,19 @@
                 btnEdit.innerText = '退出編輯 (不儲存)';
                 btnEdit.className = 'px-3 py-1.5 bg-red-100 text-red-600 rounded-lg font-black text-xs hover:bg-red-200 transition-colors border border-red-200';
                 btnSave.classList.remove('hidden');
-                btnExportMap.classList.remove('hidden');
-                btnImportJson.classList.add('hidden');
-                btnExportJson.classList.add('hidden');
+                btnExportMap.style.display='none';
+                btnImportJson.style.display='none';
+                btnExportJson.style.display='none';
                 const toolbar = document.getElementById('mapEditToolbar');
-                if (toolbar) { toolbar.classList.remove('hidden'); toolbar.classList.add('flex'); }
+                if (toolbar) {
+                    if (window.innerWidth >= 768) { toolbar.classList.remove('hidden'); toolbar.classList.add('flex'); }
+                    else { toolbar.classList.add('hidden'); toolbar.classList.remove('flex'); }
+                }
                 const mobileToolbar = document.getElementById('mapEditToolbarMobile');
-                if (mobileToolbar) { mobileToolbar.classList.remove('hidden'); mobileToolbar.classList.add('flex'); }
+                if (mobileToolbar) {
+                    if (window.innerWidth < 768) { mobileToolbar.classList.remove('hidden'); mobileToolbar.classList.add('flex'); }
+                    else { mobileToolbar.classList.add('hidden'); mobileToolbar.classList.remove('flex'); }
+                }
                 updateUndoRedoBtns();
                 
                 selectedBlocks = [];
