@@ -89,7 +89,9 @@
         #actionPanel input.field-input, #actionPanel select.field-input, #actionPanel textarea.field-input { font-size: 1rem !important; }
         #actionPanel .text-sm { font-size: 0.9rem; }
         #actionPanel h3.text-xs { font-size: 0.75rem; }
-    </style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 </head>
 <body class="min-h-screen pb-20">
 
@@ -603,51 +605,77 @@
     <!-- 平面圖彈窗 -->
     <div id="mapModal" class="fixed inset-0 bg-slate-900/90 hidden flex items-center justify-center z-[80] p-1 sm:p-4 backdrop-blur-md">
         <div class="bg-white rounded-2xl w-full max-w-[1400px] p-3 sm:p-8 shadow-2xl h-[95vh] sm:h-[90vh] flex flex-col animate-in">
-            <!-- Header -->
-            <div class="flex flex-wrap justify-between items-start gap-2 mb-3 sm:mb-6">
-                <div class="flex items-center gap-2">
-                    <div class="bg-amber-100 p-2 rounded-xl text-amber-600 hidden sm:block">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-base font-black italic text-slate-800">存放位置平面圖</h2>
-                        <div class="flex items-center gap-2 mt-1 flex-wrap">
-                            <span class="text-xs text-slate-400 font-bold">當前地點：</span>
-                            <select id="mapSiteSelect" onchange="changeMapSite()" class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg outline-none cursor-pointer border border-slate-200 hover:border-indigo-400 transition-colors"></select>
-                            <!-- 選取位置顯示 -->
-                            <div id="mapSelectedBlockBadge" class="hidden items-center gap-1.5 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                <span class="text-xs font-black text-indigo-400">選取：</span>
-                                <span id="mapSelectedBlockName" class="text-xs font-black text-indigo-700 max-w-[200px] truncate"></span>
-                            </div>
+            <!-- Header：固定兩列，不換行 -->
+            <div class="flex flex-col gap-2 mb-3 sm:mb-4 shrink-0">
+                <!-- 列1：標題 + 右側功能按鈕（永遠固定在右上角） -->
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <div class="bg-amber-100 p-2 rounded-xl text-amber-600 hidden sm:block shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
                         </div>
+                        <h2 class="text-base font-black italic text-slate-800 truncate">存放位置平面圖</h2>
+                    </div>
+                    <!-- 右側按鈕群：固定右上，永遠不換行 -->
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button id="btnImportJson" onclick="document.getElementById('importMapConfigInput').click()" class="px-2 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-black text-xs hover:bg-emerald-500 hover:text-white transition-colors hidden sm:flex items-center gap-1 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                            匯入設定(JSON)
+                        </button>
+                        <input type="file" id="importMapConfigInput" class="hidden" accept=".json" onchange="importMapConfigJSON(event)">
+                        <button id="btnExportJson" onclick="exportMapConfigJSON()" class="px-2 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg font-black text-xs hover:bg-amber-500 hover:text-white transition-colors hidden sm:flex items-center gap-1 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12" /></svg>
+                            匯出設定(JSON)
+                        </button>
+                        <button id="btnExportMap" onclick="exportMapImage()" class="px-2 py-1.5 bg-sky-50 text-sky-700 border border-sky-200 rounded-lg font-black text-xs hover:bg-sky-500 hover:text-white transition-colors flex items-center gap-1 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            匯出平面圖
+                        </button>
+                        <button id="btnMapSave" onclick="saveMapChanges()" class="hidden px-2 py-1.5 bg-emerald-500 text-white rounded-lg font-black text-xs hover:bg-emerald-600 shadow-md shadow-emerald-500/30 transition-colors">儲存</button>
+                        <button id="btnMapEditMode" onclick="toggleMapEditMode()" class="px-2 py-1.5 bg-indigo-600 text-white rounded-lg font-black text-xs hover:bg-indigo-700 transition-colors shadow-md">編輯</button>
+                        <button onclick="closeModal('mapModal')" class="text-slate-300 hover:text-slate-500 ml-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5 items-center">
-                    <button id="btnImportJson" onclick="document.getElementById('importMapConfigInput').click()" class="px-2 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-black text-xs hover:bg-emerald-500 hover:text-white transition-colors hidden sm:flex items-center gap-1 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                        匯入設定(JSON)
-                    </button>
-                    <input type="file" id="importMapConfigInput" class="hidden" accept=".json" onchange="importMapConfigJSON(event)">
-                    
-                    <button id="btnExportJson" onclick="exportMapConfigJSON()" class="px-2 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg font-black text-xs hover:bg-amber-500 hover:text-white transition-colors hidden sm:flex items-center gap-1 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0L8 8m4-4v12" /></svg>
-                        匯出設定(JSON)
-                    </button>
-                    
-                    <button id="btnExportMap" onclick="exportMapImage()" class="px-3 py-1.5 bg-sky-50 text-sky-700 border border-sky-200 rounded-lg font-black text-xs hover:bg-sky-500 hover:text-white transition-colors flex items-center gap-1 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        匯出平面圖
-                    </button>
-                    <button id="btnMapSave" onclick="saveMapChanges()" class="hidden px-3 py-1.5 bg-emerald-500 text-white rounded-lg font-black text-xs hover:bg-emerald-600 shadow-md shadow-emerald-500/30 transition-colors">儲存</button>
-                    <button id="btnMapEditMode" onclick="toggleMapEditMode()" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-black text-xs hover:bg-indigo-700 transition-colors shadow-md">編輯</button>
-                    <button onclick="closeModal('mapModal')" class="text-slate-300 hover:text-slate-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                <!-- 列2：地點選擇 + 選取badge + 編輯工具列（overflow-x scroll 防止換行） -->
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                    <span class="text-xs text-slate-400 font-bold shrink-0">當前地點：</span>
+                    <select id="mapSiteSelect" onchange="changeMapSite()" class="bg-slate-100 text-slate-700 text-xs font-black px-3 py-1.5 rounded-lg outline-none cursor-pointer border border-slate-200 hover:border-indigo-400 transition-colors shrink-0"></select>
+                    <!-- 選取位置 badge -->
+                    <div id="mapSelectedBlockBadge" class="hidden items-center gap-1.5 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-lg shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span class="text-xs font-black text-indigo-400 shrink-0">選取：</span>
+                        <span id="mapSelectedBlockName" class="text-xs font-black text-indigo-700 max-w-[160px] truncate"></span>
+                    </div>
+                    <!-- 編輯模式工具列 -->
+                    <div id="mapEditToolbar" class="hidden items-center gap-1 shrink-0">
+                        <div class="w-px h-4 bg-slate-300 mx-0.5"></div>
+                        <button id="btnMapUndo" onclick="mapUndo()" disabled title="復原 (Ctrl+Z)"
+                            class="px-2 py-1.5 bg-slate-100 text-slate-300 rounded-lg font-black text-xs cursor-not-allowed flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                            復原
+                        </button>
+                        <button id="btnMapRedo" onclick="mapRedo()" disabled title="重做 (Ctrl+Y)"
+                            class="px-2 py-1.5 bg-slate-100 text-slate-300 rounded-lg font-black text-xs cursor-not-allowed flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6"/></svg>
+                            重做
+                        </button>
+                        <div class="w-px h-4 bg-slate-300 mx-0.5"></div>
+                        <button onclick="copySelectedBlocks()" title="複製選取方塊 (Ctrl+C)"
+                            class="px-2 py-1.5 bg-slate-200 text-slate-600 rounded-lg font-black text-xs hover:bg-slate-300 transition-colors flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            複製
+                        </button>
+                        <button onclick="pasteBlocks()" title="貼上 (Ctrl+V)"
+                            class="px-2 py-1.5 bg-slate-200 text-slate-600 rounded-lg font-black text-xs hover:bg-slate-300 transition-colors flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            貼上
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -3636,7 +3664,7 @@
             const btnExportJson = document.getElementById('btnExportJson');
             
             btnEdit.innerText = '編輯';
-            btnEdit.className = 'px-5 py-3 bg-indigo-600 text-white rounded-2xl font-black text-sm hover:bg-indigo-700 transition-colors shadow-md';
+            btnEdit.className = 'px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-black text-xs hover:bg-indigo-700 transition-colors shadow-md';
             btnSave.classList.add('hidden');
             btnExportMap.classList.add('hidden');
             btnImportJson.classList.remove('hidden');
@@ -3657,6 +3685,8 @@
 
         function exitMapEditMode() {
             isMapEditMode = false;
+            const toolbar = document.getElementById('mapEditToolbar');
+            if (toolbar) { toolbar.classList.add('hidden'); toolbar.classList.remove('flex'); }
             const btnEdit = document.getElementById('btnMapEditMode');
             const btnSave = document.getElementById('btnMapSave');
             const btnExportMap = document.getElementById('btnExportMap');
@@ -3684,14 +3714,19 @@
             if (!isMapEditMode) {
                 isMapEditMode = true;
                 backupMapConfigStr = JSON.stringify(mapConfig);
-                mapEditTool = 'select'; 
+                mapEditTool = 'select';
+                mapUndoStack = [];
+                mapRedoStack = [];
                 
                 btnEdit.innerText = '退出編輯 (不儲存)';
-                btnEdit.className = 'px-5 py-3 bg-red-100 text-red-600 rounded-2xl font-black text-sm hover:bg-red-200 transition-colors border border-red-200';
+                btnEdit.className = 'px-3 py-1.5 bg-red-100 text-red-600 rounded-lg font-black text-xs hover:bg-red-200 transition-colors border border-red-200';
                 btnSave.classList.remove('hidden');
                 btnExportMap.classList.remove('hidden');
                 btnImportJson.classList.add('hidden');
                 btnExportJson.classList.add('hidden');
+                const toolbar = document.getElementById('mapEditToolbar');
+                if (toolbar) { toolbar.classList.remove('hidden'); toolbar.classList.add('flex'); }
+                updateUndoRedoBtns();
                 
                 selectedBlocks = [];
                 renderMap();
@@ -3725,6 +3760,53 @@
         // ── 平面圖複製/貼上方塊 ──
         let mapClipboard = []; // 複製的方塊資料快取
 
+        // ── Undo / Redo 堆疊 ──
+        let mapUndoStack = [];
+        let mapRedoStack = [];
+        const MAP_UNDO_LIMIT = 30;
+
+        function mapPushUndo() {
+            // 每次操作前呼叫，儲存當前狀態快照
+            mapUndoStack.push(JSON.stringify(mapConfig));
+            if (mapUndoStack.length > MAP_UNDO_LIMIT) mapUndoStack.shift();
+            mapRedoStack = []; // 新操作清空 redo
+            updateUndoRedoBtns();
+        }
+        function mapUndo() {
+            if (mapUndoStack.length === 0) return;
+            mapRedoStack.push(JSON.stringify(mapConfig));
+            mapConfig = JSON.parse(mapUndoStack.pop());
+            selectedBlocks = [];
+            renderMap();
+            renderEditPanel();
+            updateUndoRedoBtns();
+        }
+        function mapRedo() {
+            if (mapRedoStack.length === 0) return;
+            mapUndoStack.push(JSON.stringify(mapConfig));
+            mapConfig = JSON.parse(mapRedoStack.pop());
+            selectedBlocks = [];
+            renderMap();
+            renderEditPanel();
+            updateUndoRedoBtns();
+        }
+        function updateUndoRedoBtns() {
+            const undoBtn = document.getElementById('btnMapUndo');
+            const redoBtn = document.getElementById('btnMapRedo');
+            if (undoBtn) {
+                undoBtn.disabled = mapUndoStack.length === 0;
+                undoBtn.className = undoBtn.disabled
+                    ? 'px-2 py-1.5 bg-slate-100 text-slate-300 rounded-lg font-black text-xs cursor-not-allowed flex items-center gap-1'
+                    : 'px-2 py-1.5 bg-slate-200 text-slate-600 rounded-lg font-black text-xs hover:bg-slate-300 transition-colors flex items-center gap-1';
+            }
+            if (redoBtn) {
+                redoBtn.disabled = mapRedoStack.length === 0;
+                redoBtn.className = redoBtn.disabled
+                    ? 'px-2 py-1.5 bg-slate-100 text-slate-300 rounded-lg font-black text-xs cursor-not-allowed flex items-center gap-1'
+                    : 'px-2 py-1.5 bg-slate-200 text-slate-600 rounded-lg font-black text-xs hover:bg-slate-300 transition-colors flex items-center gap-1';
+            }
+        }
+
         function copySelectedBlocks() {
             if (!currentMapSite || !mapConfig[currentMapSite] || selectedBlocks.length === 0) return;
             const siteData = mapConfig[currentMapSite];
@@ -3744,9 +3826,9 @@
 
         function pasteBlocks() {
             if (!currentMapSite || mapClipboard.length === 0) {
-                // 剪貼簿為空時靜默忽略（使用者可從左側提示了解操作方式）
                 return;
             }
+            mapPushUndo();
             if (!mapConfig[currentMapSite]) mapConfig[currentMapSite] = { rows: 20, cols: 30, blocks: [] };
             const siteData = mapConfig[currentMapSite];
             // 計算位移：向右下各偏移 2 格
@@ -3770,15 +3852,21 @@
 
         // 鍵盤快捷鍵：Ctrl+C 複製、Ctrl+V 貼上（平面圖編輯模式下）
         document.addEventListener('keydown', function(e) {
+            // 只在平面圖 modal 開啟且為編輯模式時才觸發
+            const mapModal = document.getElementById('mapModal');
+            if (!mapModal || mapModal.classList.contains('hidden')) return;
             if (!isMapEditMode) return;
-            // 避免在 input/textarea 中觸發
-            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            if (e.ctrlKey && e.key === 'c') { e.preventDefault(); copySelectedBlocks(); }
-            if (e.ctrlKey && e.key === 'v') { e.preventDefault(); pasteBlocks(); }
-            // DEL / Backspace 直接刪除選取方塊
-            if ((e.key === 'Delete' || e.key === 'Backspace') && selectedBlocks.length > 0) {
+            const inInput = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT';
+            // Ctrl 快捷鍵：在任何地方都能觸發（不受 focus 位置影響）
+            if (e.ctrlKey && !e.shiftKey && e.key === 'c') { e.preventDefault(); copySelectedBlocks(); return; }
+            if (e.ctrlKey && !e.shiftKey && e.key === 'v') { e.preventDefault(); pasteBlocks(); return; }
+            if (e.ctrlKey && !e.shiftKey && e.key === 'z') { e.preventDefault(); mapUndo(); return; }
+            if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) { e.preventDefault(); mapRedo(); return; }
+            // DEL / Backspace：只在非輸入框時才刪除方塊（避免誤刪文字）
+            if (!inInput && (e.key === 'Delete' || e.key === 'Backspace') && selectedBlocks.length > 0) {
                 e.preventDefault();
                 if (mapConfig[currentMapSite] && mapConfig[currentMapSite].blocks) {
+                    mapPushUndo();
                     const count = selectedBlocks.length;
                     mapConfig[currentMapSite].blocks = mapConfig[currentMapSite].blocks.filter(b => !selectedBlocks.includes(b.id));
                     selectedBlocks = [];
@@ -3853,6 +3941,7 @@
                         block.classList.add('ring-2', 'ring-amber-400', 'ring-offset-1', 'z-30', 'shadow-lg');
                     }
                     
+                    mapPushUndo();
                     isDraggingBlock = true;
                     dragStartMouse = { x: e.clientX, y: e.clientY };
                     dragClickedBlockId = id;
@@ -3927,6 +4016,7 @@
             }
             
             if (pendingBlockCoords) {
+                mapPushUndo();
                 const newId = 'b_' + Date.now();
                 if (!mapConfig[currentMapSite]) mapConfig[currentMapSite] = { rows: 20, cols: 30, blocks: [] };
                 if (!mapConfig[currentMapSite].blocks) mapConfig[currentMapSite].blocks = [];
@@ -3956,6 +4046,7 @@
 
         function confirmDeleteBlock() {
             if (selectedBlocks.length > 0 && mapConfig[currentMapSite] && mapConfig[currentMapSite].blocks) {
+                mapPushUndo();
                 mapConfig[currentMapSite].blocks = mapConfig[currentMapSite].blocks.filter(b => !selectedBlocks.includes(b.id));
                 selectedBlocks = [];
                 renderMap();
@@ -4444,7 +4535,7 @@
             if (!siteData || !siteData.blocks) return;
             const blocksToMove = siteData.blocks.filter(b => selectedBlocks.includes(b.id));
             if (blocksToMove.length === 0) return;
-            
+            mapPushUndo();
             let canMove = true;
             for (let b of blocksToMove) {
                 if (b.r1 + dr < 0 || b.r2 + dr >= siteData.rows) canMove = false;
@@ -4617,7 +4708,7 @@
             triggerCreate, doConfirmCreate, confirmAuth, addOpt, delOpt, delOptConfirm, addOp, delOp, 
             openMapModal, changeMapSite, toggleMapEditMode, saveMapChanges, 
             confirmExitEditMode, confirmSaveMapChanges, setMapTool, changeGridSize, 
-            copySelectedBlocks, pasteBlocks,
+            copySelectedBlocks, pasteBlocks, mapUndo, mapRedo,
             handleGridMouseDown, handleGridMouseOver, confirmBlockName, cancelBlockName, 
             confirmDeleteBlock, saveSelectedBlockName, viewModeClickBlock, exportMapImage, 
             changeFontSize, moveBlock, resizeBlock, changeBlockColor, cancelImport, setGridSize,
