@@ -1437,6 +1437,7 @@
             const i = inventory.find(x => x.id === currentId);
             if (!i) return false;
             const defaultMouldStatus = i.mouldStatus || (sysOptions.mouldStatuses[0] || '');
+            const normalizeNote = s => (s || '').toString().replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
             const cur = {
                 id:           (document.getElementById('editId')?.value ?? '').trim(),
                 category:     document.getElementById('editCategory')?.value ?? '',
@@ -1447,7 +1448,7 @@
                 mouldStatus:  document.getElementById('editMouldStatus')?.value ?? '',
                 locationSite: document.getElementById('editLocationSite')?.value ?? '',
                 locationPos:  (document.getElementById('editLocationPos')?.value ?? '').trim(),
-                note:         (document.getElementById('editNote')?.value ?? '').trim()
+                note:         normalizeNote(document.getElementById('editNote')?.value)
             };
             const orig = {
                 id:           (i.id || '').toString().trim(),
@@ -1459,7 +1460,7 @@
                 mouldStatus:  defaultMouldStatus,
                 locationSite: i.locationSite || '',
                 locationPos:  (i.locationPos || '').toString().trim(),
-                note:         (i.note || '').toString().trim()
+                note:         normalizeNote(i.note)
             };
             const diffKeys = Object.keys(cur).filter(k => cur[k] !== orig[k]);
             if (diffKeys.length > 0) {
@@ -3084,9 +3085,10 @@
             }
             resetImport();
             closeModal('importModal');
-            // 匯入完成後，設旗標讓 onSnapshot 收到新資料時強制重載面板
+            // 匯入完成後，若面板開啟，直接重載面板（不等 onSnapshot，因為 skip 的資料不會觸發）
             if (currentId && document.getElementById('actionPanel') && !document.getElementById('actionPanel').classList.contains('hidden')) {
-                _forceReloadPanel = true;
+                _forceReloadPanel = false;
+                openPanel(currentId);
             }
         }
 
