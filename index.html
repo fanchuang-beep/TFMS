@@ -424,9 +424,22 @@
                                 <div class="flex items-center cursor-pointer hover:text-indigo-600 transition-colors group mb-2" onclick="handleSort('mouldStatus')">
                                     模治具狀態 <span id="sort-mouldStatus" class="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">↕</span>
                                 </div>
-                                <select id="filterMouldStatus" onchange="renderTable()" class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 focus:bg-white transition-all cursor-pointer sys-opt-status-filter">
-                                    <option value="all">所有治具狀態</option>
-                                </select>
+                                <!-- 多選治具狀態 -->
+                                <div id="filterMouldStatusWrapper" class="relative w-full">
+                                    <button type="button" id="filterMouldStatusBtn" onclick="toggleMouldStatusDropdown(event)"
+                                        class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none text-left flex items-center justify-between gap-1 hover:bg-slate-200 transition-all cursor-pointer">
+                                        <span id="filterMouldStatusLabel" class="truncate">所有治具狀態</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="filterMouldStatusDropdown" class="hidden absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1 max-h-64 overflow-y-auto custom-scroll">
+                                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                            <input type="checkbox" id="mouldStatusCheckAll" onchange="onMouldStatusCheckAll(this)" class="accent-indigo-600 w-3.5 h-3.5">
+                                            <span class="text-[11px] font-black text-slate-500">所有治具狀態</span>
+                                        </label>
+                                        <hr class="border-slate-100 mx-2 my-0.5">
+                                        <div id="filterMouldStatusList"></div>
+                                    </div>
+                                </div>
                             </th>
                             <th class="px-4 py-4 w-48 align-top">
                                 <div class="flex items-center cursor-pointer hover:text-indigo-600 transition-colors group mb-2" onclick="handleSort('locationSite')">
@@ -2641,7 +2654,7 @@
             const q = document.getElementById('globalSearch').value.toLowerCase();
             const filterStatus = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'all';
             const filterCategory = document.getElementById('filterCategory') ? document.getElementById('filterCategory').value : 'all';
-            const filterMouldStatus = document.getElementById('filterMouldStatus') ? document.getElementById('filterMouldStatus').value : 'all';
+            const filterMouldStatus = getSelectedMouldStatuses();
             const filterSite = document.getElementById('filterSite') ? document.getElementById('filterSite').value : 'all';
             const filterPos = document.getElementById('filterPos') ? document.getElementById('filterPos').value : 'all';
             
@@ -2674,7 +2687,7 @@
                 }
                 const matchStatus = filterStatus === 'all' ? true : i.status === filterStatus;
                 const matchCat = filterCategory === 'all' ? true : i.category === filterCategory;
-                const matchMouldStatus = filterMouldStatus === 'all' ? true : i.mouldStatus === filterMouldStatus;
+                const matchMouldStatus = filterMouldStatus === 'all' ? true : filterMouldStatus.includes(i.mouldStatus || '');
                 const matchSite = filterSite === 'all' ? true : i.locationSite === filterSite;
                 const matchPos = filterPos === 'all' ? true : i.locationPos === filterPos;
                 
@@ -3701,7 +3714,6 @@
                 newLocationSite:  saveVal('newLocationSite'),
                 filterStatus:     saveVal('filterStatus'),
                 filterCategory:   saveVal('filterCategory'),
-                filterMouldStatus:saveVal('filterMouldStatus'),
                 filterSite:       saveVal('filterSite'),
                 filterPos:        saveVal('filterPos'),
             };
@@ -3721,11 +3733,17 @@
                 s.innerHTML = '<option value="all">所有類別</option>' + sysOptions.categories.map(v => `<option value="${v}">${v}</option>`).join('');
                 if (prev === 'all' || sysOptions.categories.includes(prev)) s.value = prev;
             });
-            document.querySelectorAll('.sys-opt-status-filter').forEach(s => {
-                const prev = s.value;
-                s.innerHTML = '<option value="all">所有治具狀態</option>' + sysOptions.mouldStatuses.map(v => `<option value="${v}">${v}</option>`).join('');
-                if (prev === 'all' || sysOptions.mouldStatuses.includes(prev)) s.value = prev;
-            });
+            // 重建多選治具狀態 checkbox 清單
+            const mouldStatusList = document.getElementById('filterMouldStatusList');
+            if (mouldStatusList) {
+                const prev = getSelectedMouldStatuses();
+                mouldStatusList.innerHTML = sysOptions.mouldStatuses.map(v => `
+                    <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors mouldstatus-check-item">
+                        <input type="checkbox" value="${v}" class="mould-status-cb accent-indigo-600 w-3.5 h-3.5" onchange="onMouldStatusChange()" ${prev === 'all' || prev.includes(v) ? 'checked' : ''}>
+                        <span class="text-[11px] font-bold text-slate-700 truncate">${v}</span>
+                    </label>`).join('');
+                updateMouldStatusLabel();
+            }
             document.querySelectorAll('.sys-opt-site-filter').forEach(s => {
                 const prev = s.value;
                 s.innerHTML = '<option value="all">所有地點</option>' + sysOptions.sites.map(v => `<option value="${v}">${v}</option>`).join('');
@@ -3744,7 +3762,6 @@
             // 恢復篩選器的值（避免資料刷新時篩選器被重置）
             restoreVal('filterStatus',     savedVals.filterStatus);
             restoreVal('filterCategory',   savedVals.filterCategory);
-            restoreVal('filterMouldStatus',savedVals.filterMouldStatus);
             restoreVal('filterSite',       savedVals.filterSite);
             
             togglePermOutBtn();
@@ -4826,8 +4843,63 @@
             }
         }
 
-        // 將所有給 HTML 呼叫的函式暴露至 global window 中
-        // ══ 借出/歸還人員搜尋下拉 ══
+        // ── 多選治具狀態 dropdown ──────────────────────────────────
+        function toggleMouldStatusDropdown(e) {
+            e.stopPropagation();
+            const drop = document.getElementById('filterMouldStatusDropdown');
+            if (!drop) return;
+            const isHidden = drop.classList.contains('hidden');
+            // 關閉其他可能開啟的 dropdown
+            drop.classList.toggle('hidden');
+            if (isHidden) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeMouldStatusDropdownOutside);
+                }, 0);
+            }
+        }
+        function closeMouldStatusDropdownOutside(e) {
+            const wrapper = document.getElementById('filterMouldStatusWrapper');
+            if (!wrapper?.contains(e.target)) {
+                document.getElementById('filterMouldStatusDropdown')?.classList.add('hidden');
+                document.removeEventListener('click', closeMouldStatusDropdownOutside);
+            }
+        }
+        function getSelectedMouldStatuses() {
+            const boxes = document.querySelectorAll('.mould-status-cb');
+            if (!boxes.length) return 'all';
+            const checked = [...boxes].filter(b => b.checked).map(b => b.value);
+            if (checked.length === 0 || checked.length === boxes.length) return 'all';
+            return checked;
+        }
+        function updateMouldStatusLabel() {
+            const boxes = document.querySelectorAll('.mould-status-cb');
+            const checkAll = document.getElementById('mouldStatusCheckAll');
+            const label = document.getElementById('filterMouldStatusLabel');
+            if (!boxes.length || !label) return;
+            const checked = [...boxes].filter(b => b.checked);
+            if (checkAll) checkAll.checked = checked.length === boxes.length;
+            if (checked.length === 0 || checked.length === boxes.length) {
+                label.textContent = '所有治具狀態';
+                label.className = 'truncate text-slate-600';
+            } else if (checked.length === 1) {
+                label.textContent = checked[0].value;
+                label.className = 'truncate text-indigo-600 font-black';
+            } else {
+                label.textContent = `已選 ${checked.length} 項`;
+                label.className = 'truncate text-indigo-600 font-black';
+            }
+        }
+        function onMouldStatusChange() {
+            updateMouldStatusLabel();
+            renderTable();
+        }
+        function onMouldStatusCheckAll(cb) {
+            document.querySelectorAll('.mould-status-cb').forEach(b => { b.checked = cb.checked; });
+            updateMouldStatusLabel();
+            renderTable();
+        }
+
+        
         function authFlowShowDropdown() {
             authFlowFilterPersons(document.getElementById('authFlowPersonInput')?.value || '');
             document.getElementById('authFlowPersonDropdown')?.classList.remove('hidden');
@@ -4950,7 +5022,7 @@
             changeFontSize, moveBlock, resizeBlock, changeBlockColor, cancelImport, setGridSize,
             exportMapConfigJSON, importMapConfigJSON, triggerImportMapConfig: () => document.getElementById('importMapConfigInput').click(),
             handleResizeMouseDown, handlePermOut, togglePermOutBtn, toggleNewPermOutBtn,
-            toggleRowSelect, toggleSelectAll, clearBatchSelection, executeBatchFlow,
+            toggleMouldStatusDropdown, onMouldStatusChange, onMouldStatusCheckAll,
             refreshFlowBtnState, openBatchEditModal, executeBatchEdit, hasUnsavedChanges, checkBatchPermOut,
             toggleMobileMenu, closeMobileMenu, openSysConfigModal, doLogin, doLogout, doLogoutDirect, exportThenLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
             toggleLoginHistory, showLoginHistory, filterLoginHistory, selectLoginHistory, removeLoginHistory, clearLoginHistory, togglePwVisible, enablePwToggle, hidePwOnBlur,
