@@ -394,20 +394,54 @@
                                 <div class="flex justify-center items-center cursor-pointer hover:text-indigo-600 transition-colors group mb-2" onclick="handleSort('status')">
                                     狀態 <span id="sort-status" class="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">↕</span>
                                 </div>
-                                <select id="filterStatus" onchange="renderTable()" class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 focus:bg-white transition-all cursor-pointer">
-                                    <option value="all">所有狀態</option>
-                                    <option value="在庫">在庫</option>
-                                    <option value="出庫">出庫</option>
-                                    <option value="永久出庫">永久出庫</option>
-                                </select>
+                                <div id="filterStatusWrapper" class="relative w-full">
+                                    <button type="button" onclick="toggleCbDropdown('filterStatus', event)"
+                                        class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 text-left flex items-center justify-between gap-1 hover:bg-slate-200 transition-all cursor-pointer">
+                                        <span id="filterStatusLabel" class="truncate">所有狀態</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="filterStatusDropdown" class="hidden absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1">
+                                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                            <input type="checkbox" onchange="onCbCheckAll('filterStatus', this)" class="cb-checkall-filterStatus accent-indigo-600 w-3.5 h-3.5" checked>
+                                            <span class="text-[11px] font-black text-slate-500">所有狀態</span>
+                                        </label>
+                                        <hr class="border-slate-100 mx-2 my-0.5">
+                                        <div id="filterStatusList">
+                                            <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                                <input type="checkbox" value="在庫" class="cb-item-filterStatus accent-indigo-600 w-3.5 h-3.5" onchange="onCbItemChange('filterStatus')" checked>
+                                                <span class="text-[11px] font-bold text-slate-700">在庫</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                                <input type="checkbox" value="出庫" class="cb-item-filterStatus accent-indigo-600 w-3.5 h-3.5" onchange="onCbItemChange('filterStatus')" checked>
+                                                <span class="text-[11px] font-bold text-slate-700">出庫</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                                <input type="checkbox" value="永久出庫" class="cb-item-filterStatus accent-indigo-600 w-3.5 h-3.5" onchange="onCbItemChange('filterStatus')" checked>
+                                                <span class="text-[11px] font-bold text-slate-700">永久出庫</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </th>
                             <th class="px-4 py-4 w-32 align-top">
                                 <div class="flex items-center cursor-pointer hover:text-indigo-600 transition-colors group mb-2" onclick="handleSort('category')">
                                     類別 <span id="sort-category" class="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">↕</span>
                                 </div>
-                                <select id="filterCategory" onchange="renderTable()" class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 focus:bg-white transition-all cursor-pointer sys-opt-category-filter">
-                                    <option value="all">所有類別</option>
-                                </select>
+                                <div id="filterCategoryWrapper" class="relative w-full">
+                                    <button type="button" onclick="toggleCbDropdown('filterCategory', event)"
+                                        class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 text-left flex items-center justify-between gap-1 hover:bg-slate-200 transition-all cursor-pointer">
+                                        <span id="filterCategoryLabel" class="truncate">所有類別</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="filterCategoryDropdown" class="hidden absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1 max-h-64 overflow-y-auto custom-scroll">
+                                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                            <input type="checkbox" onchange="onCbCheckAll('filterCategory', this)" class="cb-checkall-filterCategory accent-indigo-600 w-3.5 h-3.5" checked>
+                                            <span class="text-[11px] font-black text-slate-500">所有類別</span>
+                                        </label>
+                                        <hr class="border-slate-100 mx-2 my-0.5">
+                                        <div id="filterCategoryList"></div>
+                                    </div>
+                                </div>
                             </th>
                             <th class="px-4 py-4 w-44 align-top">
                                 <div class="flex items-center cursor-pointer hover:text-indigo-600 transition-colors group mb-2" onclick="handleSort('id')">
@@ -426,14 +460,14 @@
                                 </div>
                                 <!-- 多選治具狀態 -->
                                 <div id="filterMouldStatusWrapper" class="relative w-full">
-                                    <button type="button" id="filterMouldStatusBtn" onclick="toggleMouldStatusDropdown(event)"
+                                    <button type="button" onclick="toggleCbDropdown('filterMouldStatus', event)"
                                         class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none text-left flex items-center justify-between gap-1 hover:bg-slate-200 transition-all cursor-pointer">
                                         <span id="filterMouldStatusLabel" class="truncate">所有治具狀態</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                                     </button>
                                     <div id="filterMouldStatusDropdown" class="hidden absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1 max-h-64 overflow-y-auto custom-scroll">
                                         <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
-                                            <input type="checkbox" id="mouldStatusCheckAll" onchange="onMouldStatusCheckAll(this)" class="accent-indigo-600 w-3.5 h-3.5">
+                                            <input type="checkbox" onchange="onCbCheckAll('filterMouldStatus', this)" class="cb-checkall-filterMouldStatus accent-indigo-600 w-3.5 h-3.5" checked>
                                             <span class="text-[11px] font-black text-slate-500">所有治具狀態</span>
                                         </label>
                                         <hr class="border-slate-100 mx-2 my-0.5">
@@ -445,17 +479,41 @@
                                 <div class="flex items-center cursor-pointer hover:text-indigo-600 transition-colors group mb-2" onclick="handleSort('locationSite')">
                                     存放地點 <span id="sort-locationSite" class="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">↕</span>
                                 </div>
-                                <select id="filterSite" onchange="renderTable()" class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 focus:bg-white transition-all cursor-pointer sys-opt-site-filter">
-                                    <option value="all">所有地點</option>
-                                </select>
+                                <div id="filterSiteWrapper" class="relative w-full">
+                                    <button type="button" onclick="toggleCbDropdown('filterSite', event)"
+                                        class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 text-left flex items-center justify-between gap-1 hover:bg-slate-200 transition-all cursor-pointer">
+                                        <span id="filterSiteLabel" class="truncate">所有地點</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="filterSiteDropdown" class="hidden absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1 max-h-64 overflow-y-auto custom-scroll">
+                                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                            <input type="checkbox" onchange="onCbCheckAll('filterSite', this)" class="cb-checkall-filterSite accent-indigo-600 w-3.5 h-3.5" checked>
+                                            <span class="text-[11px] font-black text-slate-500">所有地點</span>
+                                        </label>
+                                        <hr class="border-slate-100 mx-2 my-0.5">
+                                        <div id="filterSiteList"></div>
+                                    </div>
+                                </div>
                             </th>
                             <th class="px-4 py-4 w-32 align-top">
                                 <div class="flex items-center cursor-pointer hover:text-indigo-600 transition-colors group mb-2" onclick="handleSort('locationPos')">
                                     存放位置 <span id="sort-locationPos" class="ml-1 opacity-50 group-hover:opacity-100 transition-opacity">↕</span>
                                 </div>
-                                <select id="filterPos" onchange="renderTable()" class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 outline-none focus:border-indigo-500 focus:bg-white transition-all cursor-pointer sys-opt-pos-filter">
-                                    <option value="all">所有位置</option>
-                                </select>
+                                <div id="filterPosWrapper" class="relative w-full">
+                                    <button type="button" onclick="toggleCbDropdown('filterPos', event)"
+                                        class="w-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-bold rounded-lg px-2 py-1.5 text-left flex items-center justify-between gap-1 hover:bg-slate-200 transition-all cursor-pointer">
+                                        <span id="filterPosLabel" class="truncate">所有位置</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                    </button>
+                                    <div id="filterPosDropdown" class="hidden absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1 max-h-64 overflow-y-auto custom-scroll">
+                                        <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                            <input type="checkbox" onchange="onCbCheckAll('filterPos', this)" class="cb-checkall-filterPos accent-indigo-600 w-3.5 h-3.5" checked>
+                                            <span class="text-[11px] font-black text-slate-500">所有位置</span>
+                                        </label>
+                                        <hr class="border-slate-100 mx-2 my-0.5">
+                                        <div id="filterPosList"></div>
+                                    </div>
+                                </div>
                             </th>
                             <th class="px-4 py-4 align-top pt-5">備註</th>
                             <th class="px-4 py-4 w-36 align-top pt-5">借出/歸還人員</th>
@@ -2652,11 +2710,11 @@
 
         function renderTable() {
             const q = document.getElementById('globalSearch').value.toLowerCase();
-            const filterStatus = document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : 'all';
-            const filterCategory = document.getElementById('filterCategory') ? document.getElementById('filterCategory').value : 'all';
-            const filterMouldStatus = getSelectedMouldStatuses();
-            const filterSite = document.getElementById('filterSite') ? document.getElementById('filterSite').value : 'all';
-            const filterPos = document.getElementById('filterPos') ? document.getElementById('filterPos').value : 'all';
+            const filterStatus = getCbSelected('filterStatus');
+            const filterCategory = getCbSelected('filterCategory');
+            const filterMouldStatus = getCbSelected('filterMouldStatus');
+            const filterSite = getCbSelected('filterSite');
+            const filterPos = getCbSelected('filterPos');
             
             const tbody = document.getElementById('tableBody');
             
@@ -2685,11 +2743,11 @@
                         matchQuery = haystack.includes(q);
                     }
                 }
-                const matchStatus = filterStatus === 'all' ? true : i.status === filterStatus;
-                const matchCat = filterCategory === 'all' ? true : i.category === filterCategory;
+                const matchStatus = filterStatus === 'all' ? true : filterStatus.includes(i.status || '');
+                const matchCat = filterCategory === 'all' ? true : filterCategory.includes(i.category || '');
                 const matchMouldStatus = filterMouldStatus === 'all' ? true : filterMouldStatus.includes(i.mouldStatus || '');
-                const matchSite = filterSite === 'all' ? true : i.locationSite === filterSite;
-                const matchPos = filterPos === 'all' ? true : i.locationPos === filterPos;
+                const matchSite = filterSite === 'all' ? true : filterSite.includes(i.locationSite || '');
+                const matchPos = filterPos === 'all' ? true : filterPos.includes(i.locationPos || '');
                 
                 return matchQuery && matchStatus && matchCat && matchMouldStatus && matchSite && matchPos;
             });
@@ -3701,7 +3759,7 @@
         }
 
         function renderDropdowns() {
-            // 先記憶目前各 select 的值，重建 innerHTML 後恢復，避免重置
+            // 先記憶目前各 select 的值，重建後恢復（編輯/新增面板用的 select）
             const saveVal = id => { const el = document.getElementById(id); return el ? el.value : null; };
             const restoreVal = (id, val) => { const el = document.getElementById(id); if (el && val !== null) el.value = val; };
 
@@ -3712,10 +3770,6 @@
                 newCategory:      saveVal('newCategory'),
                 newMouldStatus:   saveVal('newMouldStatus'),
                 newLocationSite:  saveVal('newLocationSite'),
-                filterStatus:     saveVal('filterStatus'),
-                filterCategory:   saveVal('filterCategory'),
-                filterSite:       saveVal('filterSite'),
-                filterPos:        saveVal('filterPos'),
             };
 
             const types = ['categories', 'sites', 'mouldStatuses'];
@@ -3728,41 +3782,22 @@
                 });
             });
 
-            document.querySelectorAll('.sys-opt-category-filter').forEach(s => {
-                const prev = s.value;
-                s.innerHTML = '<option value="all">所有類別</option>' + sysOptions.categories.map(v => `<option value="${v}">${v}</option>`).join('');
-                if (prev === 'all' || sysOptions.categories.includes(prev)) s.value = prev;
-            });
-            // 重建多選治具狀態 checkbox 清單
-            const mouldStatusList = document.getElementById('filterMouldStatusList');
-            if (mouldStatusList) {
-                const prev = getSelectedMouldStatuses();
-                mouldStatusList.innerHTML = sysOptions.mouldStatuses.map(v => `
-                    <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors mouldstatus-check-item">
-                        <input type="checkbox" value="${v}" class="mould-status-cb accent-indigo-600 w-3.5 h-3.5" onchange="onMouldStatusChange()" ${prev === 'all' || prev.includes(v) ? 'checked' : ''}>
-                        <span class="text-[11px] font-bold text-slate-700 truncate">${v}</span>
-                    </label>`).join('');
-                updateMouldStatusLabel();
-            }
-            document.querySelectorAll('.sys-opt-site-filter').forEach(s => {
-                const prev = s.value;
-                s.innerHTML = '<option value="all">所有地點</option>' + sysOptions.sites.map(v => `<option value="${v}">${v}</option>`).join('');
-                if (prev === 'all' || sysOptions.sites.includes(prev)) s.value = prev;
-            });
-            
-            const uniquePositions = [...new Set(inventory.map(i => i.locationPos).filter(pos => pos))].sort();
-            document.querySelectorAll('.sys-opt-pos-filter').forEach(s => {
-                const currentVal = s.value;
-                s.innerHTML = '<option value="all">所有位置</option>' + uniquePositions.map(v => `<option value="${v}">${v}</option>`).join('');
-                if (uniquePositions.includes(currentVal) || currentVal === 'all') s.value = currentVal;
-            });
+            // 重建多選 checkbox 篩選器（類別、治具狀態、存放地點）
+            rebuildCbFilter('filterCategory', sysOptions.categories);
+            rebuildCbFilter('filterMouldStatus', sysOptions.mouldStatuses);
+            rebuildCbFilter('filterSite', sysOptions.sites);
 
-            // authSelect deprecated - using loggedInProfile.name instead
-            
-            // 恢復篩選器的值（避免資料刷新時篩選器被重置）
-            restoreVal('filterStatus',     savedVals.filterStatus);
-            restoreVal('filterCategory',   savedVals.filterCategory);
-            restoreVal('filterSite',       savedVals.filterSite);
+            // 存放位置：從 inventory 動態取得
+            const uniquePositions = [...new Set(inventory.map(i => i.locationPos).filter(pos => pos))].sort();
+            rebuildCbFilter('filterPos', uniquePositions);
+
+            // 恢復編輯/新增面板的 select 值
+            restoreVal('editCategory',     savedVals.editCategory);
+            restoreVal('editMouldStatus',  savedVals.editMouldStatus);
+            restoreVal('editLocationSite', savedVals.editLocationSite);
+            restoreVal('newCategory',      savedVals.newCategory);
+            restoreVal('newMouldStatus',   savedVals.newMouldStatus);
+            restoreVal('newLocationSite',  savedVals.newLocationSite);
             
             togglePermOutBtn();
             toggleNewPermOutBtn();
@@ -4843,61 +4878,100 @@
             }
         }
 
-        // ── 多選治具狀態 dropdown ──────────────────────────────────
-        function toggleMouldStatusDropdown(e) {
-            e.stopPropagation();
-            const drop = document.getElementById('filterMouldStatusDropdown');
+        // ── 通用多選 checkbox dropdown 系統 ──────────────────────────────────
+        const _cbDropdownLabels = {
+            filterStatus:      { all: '所有狀態',    single: v => v },
+            filterCategory:    { all: '所有類別',    single: v => v },
+            filterMouldStatus: { all: '所有治具狀態', single: v => v },
+            filterSite:        { all: '所有地點',    single: v => v },
+            filterPos:         { all: '所有位置',    single: v => v },
+        };
+        let _cbOpenCloser = null; // 目前開著的 dropdown 外點關閉函式
+
+        function toggleCbDropdown(filterId, e) {
+            e && e.stopPropagation();
+            const drop = document.getElementById(filterId + 'Dropdown');
             if (!drop) return;
             const isHidden = drop.classList.contains('hidden');
-            // 關閉其他可能開啟的 dropdown
-            drop.classList.toggle('hidden');
+            // 關閉所有其他 dropdown
+            ['filterStatus','filterCategory','filterMouldStatus','filterSite','filterPos'].forEach(id => {
+                if (id !== filterId) document.getElementById(id + 'Dropdown')?.classList.add('hidden');
+            });
+            if (_cbOpenCloser) { document.removeEventListener('click', _cbOpenCloser); _cbOpenCloser = null; }
             if (isHidden) {
-                setTimeout(() => {
-                    document.addEventListener('click', closeMouldStatusDropdownOutside);
-                }, 0);
+                drop.classList.remove('hidden');
+                _cbOpenCloser = (ev) => {
+                    const wrapper = document.getElementById(filterId + 'Wrapper');
+                    if (!wrapper?.contains(ev.target)) {
+                        drop.classList.add('hidden');
+                        document.removeEventListener('click', _cbOpenCloser);
+                        _cbOpenCloser = null;
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', _cbOpenCloser), 0);
+            } else {
+                drop.classList.add('hidden');
             }
         }
-        function closeMouldStatusDropdownOutside(e) {
-            const wrapper = document.getElementById('filterMouldStatusWrapper');
-            if (!wrapper?.contains(e.target)) {
-                document.getElementById('filterMouldStatusDropdown')?.classList.add('hidden');
-                document.removeEventListener('click', closeMouldStatusDropdownOutside);
-            }
-        }
-        function getSelectedMouldStatuses() {
-            const boxes = document.querySelectorAll('.mould-status-cb');
+
+        function getCbSelected(filterId) {
+            const boxes = document.querySelectorAll(`.cb-item-${filterId}`);
             if (!boxes.length) return 'all';
             const checked = [...boxes].filter(b => b.checked).map(b => b.value);
             if (checked.length === 0 || checked.length === boxes.length) return 'all';
             return checked;
         }
-        function updateMouldStatusLabel() {
-            const boxes = document.querySelectorAll('.mould-status-cb');
-            const checkAll = document.getElementById('mouldStatusCheckAll');
-            const label = document.getElementById('filterMouldStatusLabel');
+
+        function updateCbLabel(filterId) {
+            const boxes = document.querySelectorAll(`.cb-item-${filterId}`);
+            const checkAll = document.querySelector(`.cb-checkall-${filterId}`);
+            const label = document.getElementById(filterId + 'Label');
+            const cfg = _cbDropdownLabels[filterId] || { all: '全部', single: v => v };
             if (!boxes.length || !label) return;
             const checked = [...boxes].filter(b => b.checked);
             if (checkAll) checkAll.checked = checked.length === boxes.length;
             if (checked.length === 0 || checked.length === boxes.length) {
-                label.textContent = '所有治具狀態';
+                label.textContent = cfg.all;
                 label.className = 'truncate text-slate-600';
             } else if (checked.length === 1) {
-                label.textContent = checked[0].value;
+                label.textContent = cfg.single(checked[0].value);
                 label.className = 'truncate text-indigo-600 font-black';
             } else {
                 label.textContent = `已選 ${checked.length} 項`;
                 label.className = 'truncate text-indigo-600 font-black';
             }
         }
-        function onMouldStatusChange() {
-            updateMouldStatusLabel();
+
+        function onCbItemChange(filterId) {
+            updateCbLabel(filterId);
             renderTable();
         }
-        function onMouldStatusCheckAll(cb) {
-            document.querySelectorAll('.mould-status-cb').forEach(b => { b.checked = cb.checked; });
-            updateMouldStatusLabel();
+
+        function onCbCheckAll(filterId, cb) {
+            document.querySelectorAll(`.cb-item-${filterId}`).forEach(b => { b.checked = cb.checked; });
+            updateCbLabel(filterId);
             renderTable();
         }
+
+        function rebuildCbFilter(filterId, options) {
+            const listEl = document.getElementById(filterId + 'List');
+            if (!listEl) return;
+            const prev = getCbSelected(filterId); // 'all' 或 string[]
+            listEl.innerHTML = options.map(v => `
+                <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                    <input type="checkbox" value="${v.replace(/"/g,'&quot;')}" class="cb-item-${filterId} accent-indigo-600 w-3.5 h-3.5" onchange="onCbItemChange('${filterId}')"
+                        ${prev === 'all' || prev.includes(v) ? 'checked' : ''}>
+                    <span class="text-[11px] font-bold text-slate-700 truncate">${v}</span>
+                </label>`).join('');
+            updateCbLabel(filterId);
+        }
+
+        // 舊的 mouldStatus 專用函式 → 導向通用函式（向下相容）
+        function getSelectedMouldStatuses() { return getCbSelected('filterMouldStatus'); }
+        function toggleMouldStatusDropdown(e) { toggleCbDropdown('filterMouldStatus', e); }
+        function onMouldStatusChange() { onCbItemChange('filterMouldStatus'); }
+        function onMouldStatusCheckAll(cb) { onCbCheckAll('filterMouldStatus', cb); }
+        function updateMouldStatusLabel() { updateCbLabel('filterMouldStatus'); }
 
         
         function authFlowShowDropdown() {
@@ -5022,6 +5096,7 @@
             changeFontSize, moveBlock, resizeBlock, changeBlockColor, cancelImport, setGridSize,
             exportMapConfigJSON, importMapConfigJSON, triggerImportMapConfig: () => document.getElementById('importMapConfigInput').click(),
             handleResizeMouseDown, handlePermOut, togglePermOutBtn, toggleNewPermOutBtn,
+            toggleCbDropdown, onCbItemChange, onCbCheckAll,
             toggleMouldStatusDropdown, onMouldStatusChange, onMouldStatusCheckAll,
             refreshFlowBtnState, openBatchEditModal, executeBatchEdit, hasUnsavedChanges, checkBatchPermOut,
             toggleMobileMenu, closeMobileMenu, openSysConfigModal, doLogin, doLogout, doLogoutDirect, exportThenLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
