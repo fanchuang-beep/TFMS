@@ -372,28 +372,28 @@
             </div>
         </div>
 
-        <!-- 批量操作工具列 -->
-        <div id="batchActionBar" class="hidden mb-2 items-center gap-1.5 flex-wrap bg-white border border-indigo-200 rounded-xl px-3 py-2 shadow-md">
+        <!-- 批量操作工具列 (fixed bottom) -->
+        <div id="batchActionBar" class="hidden fixed bottom-0 left-0 right-0 z-50 items-center gap-2 flex-wrap bg-white border-t-2 border-indigo-300 px-4 py-3 shadow-2xl shadow-indigo-200/50" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom))">
             <span id="batchSelectedCount" class="text-xs font-black text-indigo-700 mr-1"></span>
             <div class="flex-1"></div>
-            <button onclick="executeBatchFlow('在庫')" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-black text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <button onclick="executeBatchFlow('在庫')" class="px-3 py-2 bg-emerald-600 text-white rounded-lg font-black text-xs hover:bg-emerald-700 transition-colors flex items-center gap-1 active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 回庫
             </button>
-            <button onclick="executeBatchFlow('出庫')" class="px-3 py-1.5 bg-red-600 text-white rounded-lg font-black text-xs hover:bg-red-700 transition-colors flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7"/></svg>
+            <button onclick="executeBatchFlow('出庫')" class="px-3 py-2 bg-red-600 text-white rounded-lg font-black text-xs hover:bg-red-700 transition-colors flex items-center gap-1 active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7"/></svg>
                 出庫
             </button>
-            <button onclick="openBatchEditModal()" class="px-3 py-1.5 bg-violet-600 text-white rounded-lg font-black text-xs hover:bg-violet-700 transition-colors flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <button onclick="openBatchEditModal()" class="px-3 py-2 bg-violet-600 text-white rounded-lg font-black text-xs hover:bg-violet-700 transition-colors flex items-center gap-1 active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 修改欄位
             </button>
-            <button onclick="clearBatchSelection()" class="px-3 py-1.5 bg-slate-100 text-slate-500 rounded-lg font-black text-xs hover:bg-slate-200 transition-colors">✕ 取消</button>
+            <button onclick="clearBatchSelection()" class="px-3 py-2 bg-slate-100 text-slate-500 rounded-lg font-black text-xs hover:bg-slate-200 transition-colors active:scale-95">✕ 取消</button>
         </div>
 
         <!-- 表格清單 -->
         <div class="section-card overflow-hidden">
-            <div class="overflow-x-auto overflow-y-auto custom-scroll max-h-[calc(100vh-250px)] relative">
+            <div id="tableScrollArea" class="overflow-x-auto overflow-y-auto custom-scroll max-h-[calc(100vh-250px)] relative">
                 <table class="w-full text-left border-collapse min-w-[1700px]">
                     <thead class="bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest select-none sticky top-0 z-20 shadow-sm">
                         <tr>
@@ -3393,7 +3393,7 @@
                     locationPos: (i2.locationPos || '').toString().trim(),
                     note: (i2.note || '').toString().trim()
                 };
-                const labelMap = { parts: '所屬配件', name: '名稱', category: '類別', mouldStatus: '模治具狀態', locationSite: '存放地點', locationPos: '存放位置', note: '備註' };
+                const labelMap = { parts: '所屬配件', name: '名稱', category: '類別', keeper: '保管人', mouldStatus: '模治具狀態', locationSite: '存放地點', locationPos: '存放位置', note: '備註' };
                 const changedLines = Object.keys(newValsPreview).filter(k => newValsPreview[k] !== origPreview[k]).map(k => `${labelMap[k]}: ${origPreview[k] || '（空）'} → ${newValsPreview[k] || '（空）'}`);
                 const summaryEl = document.getElementById('authChangeSummary');
                 const summaryTextEl = document.getElementById('authChangeSummaryText');
@@ -3629,12 +3629,13 @@
                         name:         (i.name || '').toString().trim(),
                         assetId:      (i.assetId || '').toString().trim(),
                         parts:        (i.parts || '').toString().trim(),
+                        keeper:       (i.keeper || '').toString().trim(),
                         mouldStatus:  i.mouldStatus || (sysOptions.mouldStatuses[0] || ''),
                         locationSite: i.locationSite || '',
                         locationPos:  (i.locationPos || '').toString().trim(),
                         note:         (i.note || '').toString().trim()
                     };
-                    const fieldLabels = { category: '類別', name: '名稱', assetId: '資產編號', parts: '所屬配件', mouldStatus: '模治具狀態', locationSite: '存放地點', locationPos: '存放位置', note: '備註' };
+                    const fieldLabels = { category: '類別', name: '名稱', assetId: '資產編號', parts: '所屬配件', keeper: '保管人', mouldStatus: '模治具狀態', locationSite: '存放地點', locationPos: '存放位置', note: '備註' };
                     const changedParts = Object.keys(newVals)
                         .filter(k => newVals[k] !== origVals[k])
                         .map(k => {
@@ -5181,6 +5182,7 @@
             toggleCbDropdown, onCbItemChange, onCbCheckAll, setCbFilter, setStatMassTransfer, setStatOut, getStatusBadgeInfo, refreshEditBadgeLive,
             toggleMouldStatusDropdown, onMouldStatusChange, onMouldStatusCheckAll,
             refreshFlowBtnState, openBatchEditModal, executeBatchEdit, hasUnsavedChanges, checkBatchPermOut,
+            toggleRowSelect, toggleSelectAll, clearBatchSelection,
             toggleMobileMenu, closeMobileMenu, openSysConfigModal, doLogin, doLogout, doLogoutDirect, exportThenLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
             toggleLoginHistory, showLoginHistory, filterLoginHistory, selectLoginHistory, removeLoginHistory, clearLoginHistory, togglePwVisible, enablePwToggle, hidePwOnBlur,
             authFlowShowDropdown, authFlowToggleDropdown, authFlowFilterPersons, authFlowSelectPerson, authFlowAddPerson,
