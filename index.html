@@ -2907,7 +2907,11 @@
             const bi3 = getStatusBadgeInfo(i.status, i.mouldStatus);
             badge.innerText = bi3.text;
             badge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${bi3.cls}`;
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            
+            renderHistory(i.history);
+            const panel = document.getElementById('actionPanel');
+            panel.classList.remove('hidden');
+            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
             // 欄位載入後重置防呆狀態（此時欄位=資料庫值，無修改）
             setTimeout(refreshFlowBtnState, 0);
         }
