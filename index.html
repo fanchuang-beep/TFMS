@@ -18,6 +18,7 @@
         .status-badge-in { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .status-badge-out { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .status-badge-perm-out { background-color: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; }
+        .status-badge-mass-transfer { background-color: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
         
         .field-label { 
             font-size: 11px; font-weight: 900; color: #64748b;
@@ -260,7 +261,7 @@
                                         <button type="button" id="btnEditKeeperLink" onclick="openAssetPage('editAssetId')" class="bg-slate-100 text-slate-600 px-3 rounded-xl font-black text-xs whitespace-nowrap hover:bg-slate-600 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">開啟資產網頁</button>
                                     </div>
                                 </div>
-                                <div class="md:col-span-2"><label class="field-label">模治具狀態</label><select id="editMouldStatus" class="field-input sys-opt-status" onchange="togglePermOutBtn(); refreshFlowBtnState()"></select></div>
+                                <div class="md:col-span-2"><label class="field-label">模治具狀態</label><select id="editMouldStatus" class="field-input sys-opt-status" onchange="togglePermOutBtn(); refreshFlowBtnState(); refreshEditBadgeLive()"></select></div>
                             </div>
                         </div>
 
@@ -323,8 +324,8 @@
         </section>
 
         <!-- 統計儀表板 -->
-        <div id="statsRow" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
-            <div class="bg-white rounded-xl border border-slate-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='all'; renderTable()">
+        <div id="statsRow" class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-3">
+            <div class="bg-white rounded-xl border border-slate-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="setCbFilter('filterStatus', 'all')">
                 <div class="bg-slate-100 p-1.5 rounded-lg group-hover:bg-slate-200 transition-colors hidden sm:block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                 </div>
@@ -333,7 +334,7 @@
                     <div id="statTotal" class="text-xl font-black text-slate-800 leading-none">0</div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl border border-emerald-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='在庫'; renderTable()">
+            <div class="bg-white rounded-xl border border-emerald-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="setCbFilter('filterStatus', '在庫')">
                 <div class="bg-emerald-50 p-1.5 rounded-lg group-hover:bg-emerald-100 transition-colors hidden sm:block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 </div>
@@ -342,7 +343,7 @@
                     <div id="statIn" class="text-xl font-black text-emerald-600 leading-none">0</div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl border border-red-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='出庫'; renderTable()">
+            <div class="bg-white rounded-xl border border-red-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="setStatOut()">
                 <div class="bg-red-50 p-1.5 rounded-lg group-hover:bg-red-100 transition-colors hidden sm:block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                 </div>
@@ -351,7 +352,16 @@
                     <div id="statOut" class="text-xl font-black text-red-500 leading-none">0</div>
                 </div>
             </div>
-            <div class="bg-white rounded-xl border border-slate-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="document.getElementById('filterStatus').value='永久出庫'; renderTable()">
+            <div class="bg-white rounded-xl border border-violet-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="setStatMassTransfer()">
+                <div class="bg-violet-50 p-1.5 rounded-lg group-hover:bg-violet-100 transition-colors hidden sm:block">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                </div>
+                <div>
+                    <div class="text-[9px] font-black text-violet-500 uppercase leading-tight">移轉量產</div>
+                    <div id="statMassTransfer" class="text-xl font-black text-violet-600 leading-none">0</div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 px-2 py-2 shadow-sm flex items-center gap-2 hover:shadow-md transition-shadow cursor-pointer group" onclick="setCbFilter('filterStatus', '永久出庫')">
                 <div class="bg-slate-100 p-1.5 rounded-lg group-hover:bg-slate-200 transition-colors hidden sm:block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                 </div>
@@ -414,6 +424,10 @@
                                             <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
                                                 <input type="checkbox" value="出庫" class="cb-item-filterStatus accent-indigo-600 w-3.5 h-3.5" onchange="onCbItemChange('filterStatus')" checked>
                                                 <span class="text-[11px] font-bold text-slate-700">出庫</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
+                                                <input type="checkbox" value="移轉量產" class="cb-item-filterStatus accent-indigo-600 w-3.5 h-3.5" onchange="onCbItemChange('filterStatus')" checked>
+                                                <span class="text-[11px] font-bold text-violet-600">移轉量產</span>
                                             </label>
                                             <label class="flex items-center gap-2 px-3 py-2 hover:bg-indigo-50 cursor-pointer transition-colors">
                                                 <input type="checkbox" value="永久出庫" class="cb-item-filterStatus accent-indigo-600 w-3.5 h-3.5" onchange="onCbItemChange('filterStatus')" checked>
@@ -1491,8 +1505,9 @@
             // 更新 badge
             const cancelBadge = document.getElementById('displayBadge');
             if (cancelBadge) {
-                cancelBadge.innerText = i.status;
-                cancelBadge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${i.status === '在庫' ? 'status-badge-in' : (i.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}`;
+                const bi = getStatusBadgeInfo(i.status, i.mouldStatus);
+                cancelBadge.innerText = bi.text;
+                cancelBadge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${bi.cls}`;
             }
             _loadingPanel = false;
             setTimeout(refreshFlowBtnState, 0);
@@ -2328,8 +2343,9 @@
                         // 更新標頭 badge
                         const badge = document.getElementById('displayBadge');
                         if (badge) {
-                            badge.innerText = i.status;
-                            badge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${i.status === '在庫' ? 'status-badge-in' : (i.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}`;
+                            const bi2 = getStatusBadgeInfo(i.status, i.mouldStatus);
+                            badge.innerText = bi2.text;
+                            badge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${bi2.cls}`;
                         }
                         // 更新最後異動資訊
                         const infoBox = document.getElementById('lastChangeInfo');
@@ -2723,11 +2739,13 @@
             const statIn = document.getElementById('statIn');
             const statOut = document.getElementById('statOut');
             const statPermOut = document.getElementById('statPermOut');
+            const statMassTransfer = document.getElementById('statMassTransfer');
             if (statTotal) {
                 statTotal.innerText = inventory.length;
                 statIn.innerText = inventory.filter(i => i.status === '在庫').length;
-                statOut.innerText = inventory.filter(i => i.status === '出庫').length;
+                statOut.innerText = inventory.filter(i => i.status === '出庫' && i.mouldStatus !== '移轉量產').length;
                 statPermOut.innerText = inventory.filter(i => i.status === '永久出庫').length;
+                if (statMassTransfer) statMassTransfer.innerText = inventory.filter(i => i.status === '出庫' && i.mouldStatus === '移轉量產').length;
             }
             
             currentFilteredData = inventory.filter(i => {
@@ -2743,7 +2761,16 @@
                         matchQuery = haystack.includes(q);
                     }
                 }
-                const matchStatus = filterStatus === 'all' ? true : filterStatus.includes(i.status || '');
+                const matchStatus = (() => {
+                    const fs = filterStatus;
+                    if (fs === 'all') return true;
+                    // 「移轉量產」是虛擬狀態：status=出庫 且 mouldStatus=移轉量產
+                    const wantMassTransfer = fs.includes('移轉量產');
+                    const wantOut = fs.includes('出庫');
+                    if (i.status === '出庫' && i.mouldStatus === '移轉量產') return wantMassTransfer;
+                    if (i.status === '出庫') return wantOut;
+                    return fs.includes(i.status || '');
+                })();
                 const matchCat = filterCategory === 'all' ? true : filterCategory.includes(i.category || '');
                 const matchMouldStatus = filterMouldStatus === 'all' ? true : filterMouldStatus.includes(i.mouldStatus || '');
                 const matchSite = filterSite === 'all' ? true : filterSite.includes(i.locationSite || '');
@@ -2793,7 +2820,7 @@
                         <input type="checkbox" class="row-checkbox w-4 h-4 accent-indigo-600 cursor-pointer" data-id="${i.id}" onchange="toggleRowSelect('${i.id}', this.checked)" ${batchSelected.has(i.id) ? 'checked' : ''}>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="inline-block whitespace-nowrap px-3 py-1.5 rounded-xl font-black text-[10px] tracking-widest ${i.status === '在庫' ? 'status-badge-in' : (i.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}">${i.status}</span>
+                        ${(() => { const bi = getStatusBadgeInfo(i.status, i.mouldStatus); return `<span class="inline-block whitespace-nowrap px-3 py-1.5 rounded-xl font-black text-[10px] tracking-widest ${bi.cls}">${bi.text}</span>`; })()}
                     </td>
                     <td class="px-6 py-4">
                         <span class="px-2 py-1 bg-slate-100 text-slate-500 rounded font-black text-[10px] uppercase">${i.category}</span>
@@ -2877,11 +2904,9 @@
             } else { infoBox.classList.add('hidden'); }
             
             const badge = document.getElementById('displayBadge');
-            badge.innerText = i.status;
-            badge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${i.status === '在庫' ? 'status-badge-in' : (i.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}`;
-            
-            renderHistory(i.history);
-            document.getElementById('actionPanel').classList.remove('hidden');
+            const bi3 = getStatusBadgeInfo(i.status, i.mouldStatus);
+            badge.innerText = bi3.text;
+            badge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${bi3.cls}`;
             window.scrollTo({top: 0, behavior: 'smooth'});
             // 欄位載入後重置防呆狀態（此時欄位=資料庫值，無修改）
             setTimeout(refreshFlowBtnState, 0);
@@ -3555,8 +3580,9 @@
                     // 更新 badge
                     const flowBadge = document.getElementById('displayBadge');
                     if (flowBadge) {
-                        flowBadge.innerText = refreshed.status;
-                        flowBadge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${refreshed.status === '在庫' ? 'status-badge-in' : (refreshed.status === '永久出庫' ? 'status-badge-perm-out' : 'status-badge-out')}`;
+                        const bi4 = getStatusBadgeInfo(refreshed.status, refreshed.mouldStatus);
+                        flowBadge.innerText = bi4.text;
+                        flowBadge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${bi4.cls}`;
                     }
                     // 更新借出人員
                     const bpEl = document.getElementById('editBorrowPersonText');
@@ -4966,7 +4992,59 @@
             updateCbLabel(filterId);
         }
 
-        // 舊的 mouldStatus 專用函式 → 導向通用函式（向下相容）
+        // 編輯面板中切換模治具狀態時，即時更新左上角 badge
+        function refreshEditBadgeLive() {
+            const item = inventory.find(x => x.id === currentId);
+            if (!item) return;
+            const mouldStatus = document.getElementById('editMouldStatus')?.value || item.mouldStatus;
+            const badge = document.getElementById('displayBadge');
+            if (!badge) return;
+            const bi = getStatusBadgeInfo(item.status, mouldStatus);
+            badge.innerText = bi.text;
+            badge.className = `whitespace-nowrap px-5 py-1.5 rounded-full text-xs font-black tracking-widest uppercase ${bi.cls}`;
+        }
+
+        
+        function getStatusBadgeInfo(status, mouldStatus) {
+            if (status === '出庫' && mouldStatus === '移轉量產') {
+                return { text: '移轉量產', cls: 'status-badge-mass-transfer' };
+            }
+            if (status === '在庫')      return { text: '在庫',   cls: 'status-badge-in' };
+            if (status === '永久出庫')  return { text: '永久出庫', cls: 'status-badge-perm-out' };
+            return { text: status || '出庫', cls: 'status-badge-out' };
+        }
+
+        
+        function setStatMassTransfer() {
+            const boxes = document.querySelectorAll('.cb-item-filterStatus');
+            boxes.forEach(b => { b.checked = (b.value === '移轉量產'); });
+            updateCbLabel('filterStatus');
+            setCbFilter('filterMouldStatus', 'all');
+            renderTable();
+        }
+
+        function setStatOut() {
+            const boxes = document.querySelectorAll('.cb-item-filterStatus');
+            boxes.forEach(b => { b.checked = (b.value === '出庫'); });
+            updateCbLabel('filterStatus');
+            setCbFilter('filterMouldStatus', 'all');
+            renderTable();
+        }
+
+        
+        function setCbFilter(filterId, value) {
+            const boxes = document.querySelectorAll(`.cb-item-${filterId}`);
+            if (!boxes.length) return;
+            if (value === 'all') {
+                boxes.forEach(b => { b.checked = true; });
+            } else {
+                boxes.forEach(b => { b.checked = (b.value === value); });
+            }
+            updateCbLabel(filterId);
+            renderTable();
+        }
+
+        
         function getSelectedMouldStatuses() { return getCbSelected('filterMouldStatus'); }
         function toggleMouldStatusDropdown(e) { toggleCbDropdown('filterMouldStatus', e); }
         function onMouldStatusChange() { onCbItemChange('filterMouldStatus'); }
@@ -5096,7 +5174,7 @@
             changeFontSize, moveBlock, resizeBlock, changeBlockColor, cancelImport, setGridSize,
             exportMapConfigJSON, importMapConfigJSON, triggerImportMapConfig: () => document.getElementById('importMapConfigInput').click(),
             handleResizeMouseDown, handlePermOut, togglePermOutBtn, toggleNewPermOutBtn,
-            toggleCbDropdown, onCbItemChange, onCbCheckAll,
+            toggleCbDropdown, onCbItemChange, onCbCheckAll, setCbFilter, setStatMassTransfer, setStatOut, getStatusBadgeInfo, refreshEditBadgeLive,
             toggleMouldStatusDropdown, onMouldStatusChange, onMouldStatusCheckAll,
             refreshFlowBtnState, openBatchEditModal, executeBatchEdit, hasUnsavedChanges, checkBatchPermOut,
             toggleMobileMenu, closeMobileMenu, openSysConfigModal, doLogin, doLogout, doLogoutDirect, exportThenLogout, openAccountModal, createAccount, toggleUserRole, changeMyPassword,
